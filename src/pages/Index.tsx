@@ -1,11 +1,10 @@
 
 import React, { useState, useEffect } from 'react';
-import { Outlet } from 'react-router-dom';
+import { Outlet, useLocation } from 'react-router-dom';
 import { ChatProvider } from '@/contexts/ChatContext';
 import Header from '@/components/Header';
 import ChatList from '@/components/ChatList';
 import { useIsMobile } from '@/hooks/use-mobile';
-import { useLocation } from 'react-router-dom';
 import { cn } from '@/lib/utils';
 
 const Index = () => {
@@ -21,13 +20,13 @@ const Index = () => {
   
   return (
     <ChatProvider>
-      <div className="h-screen w-full flex flex-col bg-background text-foreground">
+      <div className="h-screen w-full flex flex-col bg-background text-foreground animate-fade-in">
         <Header theme={theme} setTheme={setTheme} />
         <div className="flex-1 flex overflow-hidden">
           {/* Sidebar */}
           <div 
             className={cn(
-              "w-full max-w-xs border-r border-border/10 sidebar-gradient transition-transform duration-300 ease-in-out relative z-20",
+              "w-full max-w-xs border-r border-border/10 sidebar-gradient transition-all duration-300 ease-in-out relative z-20",
               isMobile && !isHomePage && "-translate-x-full",
               isMobile && "absolute inset-y-0 left-0 h-[calc(100vh-64px)]"
             )}
@@ -37,7 +36,7 @@ const Index = () => {
           
           {/* Main content */}
           <div className={cn(
-            "flex-1 relative", 
+            "flex-1 relative animate-fade-in", 
             isMobile && !isHomePage && "z-10"
           )}>
             <Outlet />

@@ -13,13 +13,17 @@ const MessageBubble = ({ message, isMe }: MessageBubbleProps) => {
   return (
     <div 
       className={cn(
-        "flex mb-3 animate-fade-in",
+        "flex mb-3 animate-fade-in transition-all",
         isMe ? "justify-end" : "justify-start"
       )}
     >
       {!isMe && (
-        <div className="h-8 w-8 rounded-full overflow-hidden flex-shrink-0 mr-2 mt-1">
-          <img src={`https://source.boringavatars.com/beam/120/${message.sender}`} alt={message.sender} className="h-full w-full object-cover" />
+        <div className="h-8 w-8 rounded-full overflow-hidden flex-shrink-0 mr-2 mt-1 border border-border/20">
+          <img 
+            src={`https://source.unsplash.com/collection/happy-people/120/${message.sender}`} 
+            alt={message.sender} 
+            className="h-full w-full object-cover" 
+          />
         </div>
       )}
       
@@ -28,12 +32,12 @@ const MessageBubble = ({ message, isMe }: MessageBubbleProps) => {
           className={cn(
             "chat-bubble",
             isMe
-              ? "bg-primary text-primary-foreground"
-              : "bg-secondary text-secondary-foreground"
+              ? "bg-primary text-primary-foreground rounded-2xl rounded-tr-sm"
+              : "bg-secondary text-secondary-foreground rounded-2xl rounded-tl-sm"
           )}
         >
           <div className="flex flex-col">
-            <span>{message.text}</span>
+            <span className="break-words whitespace-pre-wrap">{message.text}</span>
             {!isMe && (
               <span className="translate-tag">
                 Translated from {message.sender}'s language
@@ -48,20 +52,24 @@ const MessageBubble = ({ message, isMe }: MessageBubbleProps) => {
             isMe ? "justify-end" : "justify-start"
           )}
         >
-          <span>{message.timestamp}</span>
+          <span className="text-muted-foreground text-xs">{message.timestamp}</span>
           
           {isMe && (
             <span className="ml-1 flex">
-              <Check className="h-3 w-3" />
-              {message.read && <Check className="h-3 w-3 -ml-1" />}
+              <Check className="h-3 w-3 text-muted-foreground" />
+              {message.read && <Check className="h-3 w-3 -ml-1 text-muted-foreground" />}
             </span>
           )}
         </div>
       </div>
       
       {isMe && (
-        <div className="h-8 w-8 rounded-full overflow-hidden flex-shrink-0 ml-2 mt-1">
-          <img src="https://source.boringavatars.com/beam/120/You" alt="You" className="h-full w-full object-cover" />
+        <div className="h-8 w-8 rounded-full overflow-hidden flex-shrink-0 ml-2 mt-1 border border-border/20">
+          <img 
+            src="https://source.unsplash.com/collection/happy-people/120/me" 
+            alt="You" 
+            className="h-full w-full object-cover" 
+          />
         </div>
       )}
     </div>

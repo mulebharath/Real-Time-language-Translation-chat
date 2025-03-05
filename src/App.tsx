@@ -11,6 +11,9 @@ import ChatView from "./pages/ChatView";
 import NotFound from "./pages/NotFound";
 import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
+import Contacts from "./pages/Contacts";
+import Notifications from "./pages/Notifications";
+import Settings from "./pages/Settings";
 
 const queryClient = new QueryClient();
 
@@ -56,6 +59,21 @@ const App = () => {
             <Route path="/dashboard" element={
               <RequireAuth>
                 <Dashboard />
+              </RequireAuth>
+            } />
+            <Route path="/contacts" element={
+              <RequireAuth>
+                <Contacts />
+              </RequireAuth>
+            } />
+            <Route path="/notifications" element={
+              <RequireAuth>
+                <Notifications />
+              </RequireAuth>
+            } />
+            <Route path="/settings" element={
+              <RequireAuth>
+                <Settings />
               </RequireAuth>
             } />
             <Route path="/" element={
