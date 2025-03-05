@@ -1,13 +1,50 @@
-// Update this page (the content is just a fallback if you fail to update the page)
+
+import React, { useState, useEffect } from 'react';
+import { Outlet } from 'react-router-dom';
+import { ChatProvider } from '@/contexts/ChatContext';
+import Header from '@/components/Header';
+import ChatList from '@/components/ChatList';
+import { useIsMobile } from '@/hooks/use-mobile';
+import { useLocation } from 'react-router-dom';
+import { cn } from '@/lib/utils';
 
 const Index = () => {
+  const [theme, setTheme] = useState<'dark' | 'light'>('light');
+  const isMobile = useIsMobile();
+  const location = useLocation();
+  const isHomePage = location.pathname === '/';
+  
+  // Set up theme class on document
+  useEffect(() => {
+    document.documentElement.classList.toggle('dark', theme === 'dark');
+  }, [theme]);
+  
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100">
-      <div className="text-center">
-        <h1 className="text-4xl font-bold mb-4">Welcome to Your Blank App</h1>
-        <p className="text-xl text-gray-600">Start building your amazing project here!</p>
+    <ChatProvider>
+      <div className="h-screen w-full flex flex-col bg-background text-foreground">
+        <Header theme={theme} setTheme={setTheme} />
+        <div className="flex-1 flex overflow-hidden">
+          {/* Sidebar */}
+          <div 
+            className={cn(
+              "w-full max-w-xs border-r bg-sidebar transition-transform duration-300 ease-in-out relative z-20",
+              isMobile && !isHomePage && "-translate-x-full",
+              isMobile && "absolute inset-y-0 left-0 h-[calc(100vh-64px)]"
+            )}
+          >
+            <ChatList />
+          </div>
+          
+          {/* Main content */}
+          <div className={cn(
+            "flex-1 relative", 
+            isMobile && !isHomePage && "z-10"
+          )}>
+            <Outlet />
+          </div>
+        </div>
       </div>
-    </div>
+    </ChatProvider>
   );
 };
 
