@@ -1,6 +1,6 @@
 import { nanoid } from 'nanoid';
 
-export type Language = 'English' | 'Spanish' | 'French' | 'German' | 'Japanese';
+export type Language = 'English' | 'Spanish' | 'French' | 'German' | 'Japanese' | 'Chinese' | 'Russian' | 'Arabic' | 'Portuguese' | 'Hindi';
 
 export interface Message {
   id: string;
@@ -29,7 +29,8 @@ const stockImages = {
   'Carlos': 'https://images.unsplash.com/photo-1472396961693-142e6e269027?w=120&h=120&fit=crop',
   'Dieter': 'https://images.unsplash.com/photo-1466721591366-2d5fba72006d?w=120&h=120&fit=crop',
   'Yuki': 'https://images.unsplash.com/photo-1721322800607-8c38375eef04?w=120&h=120&fit=crop',
-  'Me': 'https://source.boringavatars.com/beam/120/You'
+  'Me': 'https://source.boringavatars.com/beam/120/You',
+  'User': '/lovable-uploads/d3b8c3f5-99d7-4e68-a793-894924b80c68.png'
 };
 
 const generateAvatar = (name: string) => {
@@ -54,55 +55,100 @@ export const translateText = (text: string, fromLang: Language, toLang: Language
       'Spanish': '¡Hola!',
       'French': 'Salut!',
       'German': 'Hallo!',
-      'Japanese': 'こんにちは!'
+      'Japanese': 'こんにちは!',
+      'Chinese': '你好!',
+      'Russian': 'Привет!',
+      'Arabic': 'مرحبا!',
+      'Portuguese': 'Olá!',
+      'Hindi': 'नमस्ते!'
     },
     '¡Hola!': {
       'English': 'Hello!',
       'French': 'Salut!',
       'German': 'Hallo!',
-      'Japanese': 'こんにちは!'
+      'Japanese': 'こんにちは!',
+      'Chinese': '你好!',
+      'Russian': 'Привет!',
+      'Arabic': 'مرحبا!',
+      'Portuguese': 'Olá!',
+      'Hindi': 'नमस्ते!'
     },
     'How are you?': {
       'Spanish': '¿Cómo estás?',
       'French': 'Comment ça va?',
       'German': 'Wie geht es dir?',
-      'Japanese': 'お元気ですか?'
+      'Japanese': 'お元気ですか?',
+      'Chinese': '你怎么样?',
+      'Russian': 'Как дела?',
+      'Arabic': 'كيف حالك؟',
+      'Portuguese': 'Como vai?',
+      'Hindi': 'आप कैसे हैं?'
     },
     '¿Cómo estás?': {
       'English': 'How are you?',
       'French': 'Comment ça va?',
       'German': 'Wie geht es dir?',
-      'Japanese': 'お元気ですか?'
+      'Japanese': 'お元気ですか?',
+      'Chinese': '你怎么样?',
+      'Russian': 'Как дела?',
+      'Arabic': 'كيف حالك?',
+      'Portuguese': 'Como vai?',
+      'Hindi': 'आप कैसे हैं?'
     },
     'I\'m good, thanks!': {
       'Spanish': '¡Estoy bien, gracias!',
       'French': 'Je vais bien, merci!',
       'German': 'Mir geht es gut, danke!',
-      'Japanese': '元気です、ありがとう!'
+      'Japanese': '元気です、ありがとう!',
+      'Chinese': '我很好，谢谢!',
+      'Russian': 'Я хорошо, спасибо!',
+      'Arabic': 'أنا جيد، شكرا!',
+      'Portuguese': 'Estou bem, obrigado!',
+      'Hindi': 'मैं बेहद आसान हूं, धन्यवाद!'
     },
     '¡Estoy bien, gracias!': {
       'English': 'I\'m good, thanks!',
       'French': 'Je vais bien, merci!',
       'German': 'Mir geht es gut, danke!',
-      'Japanese': '元気です、ありがとう!'
+      'Japanese': '元気です、ありがとう!',
+      'Chinese': '我很好，谢谢!',
+      'Russian': 'Я хорошо, спасибо!',
+      'Arabic': 'أنا جيد، شكرا!',
+      'Portuguese': 'Estou bem, obrigado!',
+      'Hindi': 'मैं बेहद आसान हूं, धन्यवाद!'
     },
     'What are you doing?': {
       'Spanish': '¿Qué estás haciendo?',
       'French': 'Que fais-tu?',
       'German': 'Was machst du?',
-      'Japanese': '何してるの?'
+      'Japanese': '何してるの?',
+      'Chinese': '你在做什么?',
+      'Russian': 'Что ты делаешь?',
+      'Arabic': 'ماذا تفعل؟',
+      'Portuguese': 'O que você está fazendo?',
+      'Hindi': 'आप क्या कर रहे हैं?'
     },
     'Nice to meet you!': {
       'Spanish': '¡Encantado de conocerte!',
       'French': 'Ravi de vous rencontrer!',
       'German': 'Schön dich kennenzulernen!',
-      'Japanese': 'はじめまして!'
+      'Japanese': 'はじめまして!',
+      'Chinese': '很高兴见到你!',
+      'Russian': 'Приятно познакомиться!',
+      'Arabic': 'أنا سعيد بانضمك!',
+      'Portuguese': 'Fico feliz em conhecê-lo(a)!',
+      'Hindi': 'मैं आपको जाना चाहता हूं!'
     },
     'See you later!': {
       'Spanish': '¡Hasta luego!',
       'French': 'À plus tard!',
       'German': 'Bis später!',
-      'Japanese': 'またね!'
+      'Japanese': 'またね!',
+      'Chinese': '再见!',
+      'Russian': 'До свидания!',
+      'Arabic': 'مع السلامة!',
+      'Portuguese': 'Até logo!',
+      'Hindi': 'लंबे दिन देखें!'
     }
   };
   

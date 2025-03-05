@@ -1,4 +1,3 @@
-
 import React, { Dispatch, SetStateAction } from 'react';
 import { useChat } from '@/contexts/ChatContext';
 import { Button } from '@/components/ui/button';
@@ -22,7 +21,7 @@ const Header = ({ theme, setTheme }: HeaderProps) => {
   const { userLanguage, setUserLanguage, toggleChatList } = useChat();
   const isMobile = useIsMobile();
   
-  const languages: Language[] = ['English', 'Spanish', 'French', 'German', 'Japanese'];
+  const languages: Language[] = ['English', 'Spanish', 'French', 'German', 'Japanese', 'Chinese', 'Russian', 'Arabic', 'Portuguese', 'Hindi'];
   
   return (
     <header className="h-16 bg-background text-foreground flex items-center px-4 sticky top-0 z-30 w-full border-b border-border/10">

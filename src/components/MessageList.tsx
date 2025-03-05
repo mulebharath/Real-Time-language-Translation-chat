@@ -15,7 +15,7 @@ const MessageList = () => {
   if (!activeChat) {
     return (
       <div className="flex-1 flex flex-col items-center justify-center p-4 animate-fade-in">
-        <MessageCircle className="h-16 w-16 text-muted-foreground/20 mb-4" />
+        <MessageCircle className="h-16 w-16 text-muted-foreground/20 mb-4 animate-pulse" />
         <p className="text-muted-foreground text-center">
           Select a chat to start messaging<br />
           <span className="text-sm opacity-70">Your conversations will appear here</span>
@@ -34,7 +34,9 @@ const MessageList = () => {
             style={{ 
               animationDelay: `${index * 0.05}s`,
               opacity: 0,
-              animation: 'fade-in 0.3s ease-out forwards'
+              animation: 'fade-in 0.3s ease-out forwards',
+              transform: message.sender === 'me' ? 'translateX(20px)' : 'translateX(-20px)',
+              animationFillMode: 'forwards'
             }}
           >
             <MessageBubble

@@ -119,7 +119,7 @@ const ChatList = () => {
         <div className="flex items-center gap-3">
           <div className="relative">
             <img 
-              src="https://source.unsplash.com/collection/happy-people/100x100?user" 
+              src="/lovable-uploads/d3b8c3f5-99d7-4e68-a793-894924b80c68.png" 
               alt="User avatar"
               className="w-8 h-8 rounded-full object-cover" 
             />

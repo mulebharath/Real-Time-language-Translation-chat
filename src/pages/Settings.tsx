@@ -28,7 +28,7 @@ const Settings = () => {
           <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center">
             <div className="relative">
               <img 
-                src="https://source.unsplash.com/collection/happy-people/100x100?user" 
+                src="/lovable-uploads/d3b8c3f5-99d7-4e68-a793-894924b80c68.png" 
                 alt="Profile"
                 className="w-20 h-20 rounded-full object-cover border-2 border-primary/20" 
               />
@@ -158,7 +158,12 @@ const Settings = () => {
               <option value="es">Spanish</option>
               <option value="fr">French</option>
               <option value="de">German</option>
+              <option value="ja">Japanese</option>
               <option value="zh">Chinese</option>
+              <option value="ru">Russian</option>
+              <option value="ar">Arabic</option>
+              <option value="pt">Portuguese</option>
+              <option value="hi">Hindi</option>
             </select>
           </div>
         </CardContent>
