@@ -1,5 +1,4 @@
-
-import React, { useState } from 'react';
+import React, { useState, Dispatch, SetStateAction } from 'react';
 import { useChat } from '@/contexts/ChatContext';
 import { Button } from '@/components/ui/button';
 import { Globe, Menu, Moon, Sun, User } from 'lucide-react';
@@ -14,8 +13,8 @@ import { Language } from '@/lib/data';
 import { useIsMobile } from '@/hooks/use-mobile';
 
 interface HeaderProps {
-  theme: string;
-  setTheme: (theme: string) => void;
+  theme: 'dark' | 'light';
+  setTheme: Dispatch<SetStateAction<'dark' | 'light'>>;
 }
 
 const Header = ({ theme, setTheme }: HeaderProps) => {
