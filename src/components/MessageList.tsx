@@ -20,15 +20,17 @@ const MessageList = () => {
   }
   
   return (
-    <div className="flex-1 overflow-y-auto p-4 scrollbar-thin">
-      {activeChat.messages.map((message) => (
-        <MessageBubble
-          key={message.id}
-          message={message}
-          isMe={message.sender === 'me'}
-        />
-      ))}
-      <div ref={messagesEndRef} />
+    <div className="flex-1 overflow-y-auto p-4 scrollbar-thin bg-background">
+      <div className="max-w-3xl mx-auto">
+        {activeChat.messages.map((message) => (
+          <MessageBubble
+            key={message.id}
+            message={message}
+            isMe={message.sender === 'me'}
+          />
+        ))}
+        <div ref={messagesEndRef} />
+      </div>
     </div>
   );
 };

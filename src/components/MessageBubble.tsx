@@ -17,13 +17,19 @@ const MessageBubble = ({ message, isMe }: MessageBubbleProps) => {
         isMe ? "justify-end" : "justify-start"
       )}
     >
+      {!isMe && (
+        <div className="h-8 w-8 rounded-full overflow-hidden flex-shrink-0 mr-2 mt-1">
+          <img src={`https://source.boringavatars.com/beam/120/${message.sender}`} alt={message.sender} className="h-full w-full object-cover" />
+        </div>
+      )}
+      
       <div className="flex flex-col max-w-[85%]">
         <div
           className={cn(
             "chat-bubble",
             isMe
-              ? "bg-chat-sent text-chat-sent-foreground"
-              : "bg-chat-received text-chat-received-foreground"
+              ? "bg-primary text-primary-foreground"
+              : "bg-secondary text-secondary-foreground"
           )}
         >
           <div className="flex flex-col">
@@ -52,6 +58,12 @@ const MessageBubble = ({ message, isMe }: MessageBubbleProps) => {
           )}
         </div>
       </div>
+      
+      {isMe && (
+        <div className="h-8 w-8 rounded-full overflow-hidden flex-shrink-0 ml-2 mt-1">
+          <img src="https://source.boringavatars.com/beam/120/You" alt="You" className="h-full w-full object-cover" />
+        </div>
+      )}
     </div>
   );
 };

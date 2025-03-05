@@ -9,7 +9,7 @@ import { useLocation } from 'react-router-dom';
 import { cn } from '@/lib/utils';
 
 const Index = () => {
-  const [theme, setTheme] = useState<'dark' | 'light'>('light');
+  const [theme, setTheme] = useState<'dark' | 'light'>('dark');
   const isMobile = useIsMobile();
   const location = useLocation();
   const isHomePage = location.pathname === '/';
@@ -27,7 +27,7 @@ const Index = () => {
           {/* Sidebar */}
           <div 
             className={cn(
-              "w-full max-w-xs border-r bg-sidebar transition-transform duration-300 ease-in-out relative z-20",
+              "w-full max-w-xs border-r border-border/10 sidebar-gradient transition-transform duration-300 ease-in-out relative z-20",
               isMobile && !isHomePage && "-translate-x-full",
               isMobile && "absolute inset-y-0 left-0 h-[calc(100vh-64px)]"
             )}
