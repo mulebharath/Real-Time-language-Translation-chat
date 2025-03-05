@@ -200,12 +200,12 @@ export const sampleResponses = [
   'I was just thinking about you!',
   'Have you seen that new movie?',
   'Do you have plans for the weekend?',
-  'I'm working on a project right now.',
+  'I\'m working on a project right now.',
   'The weather is lovely today!',
   'Did you get my message earlier?',
-  'Let's meet up soon!',
+  'Let\'s meet up soon!',
   'I agree with you completely!',
-  'That's really interesting!',
-  'I didn't know that, thanks for sharing!',
+  'That\'s really interesting!',
+  'I didn\'t know that, thanks for sharing!',
   'Sorry for the late reply!'
 ];
