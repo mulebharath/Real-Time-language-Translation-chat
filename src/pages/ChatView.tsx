@@ -8,7 +8,7 @@ import MessageInput from '@/components/MessageInput';
 
 const ChatView = () => {
   const { chatId } = useParams<{ chatId: string }>();
-  const { setActiveChatId, chats } = useChat();
+  const { setActiveChatId, chats, connectionStatus } = useChat();
   const navigate = useNavigate();
   
   useEffect(() => {
@@ -24,7 +24,10 @@ const ChatView = () => {
     }
     
     setActiveChatId(chatId);
-  }, [chatId, chats, navigate, setActiveChatId]);
+    
+    // This would be where we'd connect to the specific chat channel via Socket.io
+    console.log(`Connected to chat ${chatId}, connection status: ${connectionStatus}`);
+  }, [chatId, chats, navigate, setActiveChatId, connectionStatus]);
   
   return (
     <div className="flex flex-col h-full">

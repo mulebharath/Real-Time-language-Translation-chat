@@ -3,12 +3,16 @@ import React, { useState, useRef } from 'react';
 import { useChat } from '@/contexts/ChatContext';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { Smile, Send, Paperclip, Mic, Image, Camera, File, Loader2, Globe } from 'lucide-react';
+import { 
+  Smile, Send, Paperclip, Mic, Image, Camera, File, Loader2, Globe,
+  Heart, Star, ThumbsUp, Zap, Party, Laugh, Frown, Coffee, Music, Sun
+} from 'lucide-react';
 import { 
   Popover, 
   PopoverContent, 
   PopoverTrigger 
 } from '@/components/ui/popover';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 const MessageInput = () => {
   const [message, setMessage] = useState('');
@@ -36,11 +40,15 @@ const MessageInput = () => {
     }
   };
 
-  const emojis = [
-    '😀', '😂', '😍', '🤔', '👍', '❤️', '🎉', '👋', '🙏', '🔥',
-    '😊', '😎', '🙄', '😢', '😡', '👏', '🌟', '💯', '🤝', '🎂',
-    '✨', '💖', '💕', '💪', '👀', '🍕', '🍦', '🌈', '⚡', '💤'
-  ];
+  // Expanded emoji collection with categories
+  const emojiCategories = {
+    smileys: ['😀', '😂', '😍', '😊', '🙂', '😎', '🤔', '😢', '😭', '😡', '🙄', '😴', '🥺', '😏'],
+    gestures: ['👍', '👎', '👌', '👋', '✌️', '🤞', '🤝', '👏', '🙏', '💪', '🤙', '👊'],
+    hearts: ['❤️', '🧡', '💛', '💚', '💙', '💜', '🖤', '💕', '💓', '💗', '💖', '💘'],
+    animals: ['🐶', '🐱', '🐭', '🐰', '🦊', '🐻', '🐼', '🐨', '🦁', '🐯', '🦄', '🐝'],
+    food: ['🍎', '🍕', '🍔', '🍦', '🍩', '🍰', '🍺', '☕', '🍷', '🥂', '🍣', '🥗'],
+    activities: ['⚽', '🏀', '🎮', '🎬', '🎵', '🎨', '🚗', '✈️', '🏠', '💻', '📱', '📚']
+  };
   
   const insertEmoji = (emoji: string) => {
     setMessage(prev => prev + emoji);
@@ -104,19 +112,34 @@ const MessageInput = () => {
               <Smile className="h-5 w-5" />
             </Button>
           </PopoverTrigger>
-          <PopoverContent className="w-auto p-2 bg-secondary border-border/20" align="start" side="top">
-            <div className="flex gap-2 flex-wrap max-w-[240px]">
-              {emojis.map((emoji) => (
-                <button
-                  key={emoji}
-                  type="button"
-                  onClick={() => insertEmoji(emoji)}
-                  className="text-xl hover:bg-muted p-1 rounded cursor-pointer transition-colors"
-                >
-                  {emoji}
-                </button>
+          <PopoverContent className="w-64 p-2 bg-secondary border-border/20" align="start" side="top">
+            <Tabs defaultValue="smileys" className="w-full">
+              <TabsList className="grid grid-cols-6 mb-2">
+                <TabsTrigger value="smileys" className="p-1">😀</TabsTrigger>
+                <TabsTrigger value="gestures" className="p-1">👍</TabsTrigger>
+                <TabsTrigger value="hearts" className="p-1">❤️</TabsTrigger>
+                <TabsTrigger value="animals" className="p-1">🐶</TabsTrigger>
+                <TabsTrigger value="food" className="p-1">🍕</TabsTrigger>
+                <TabsTrigger value="activities" className="p-1">⚽</TabsTrigger>
+              </TabsList>
+              
+              {Object.entries(emojiCategories).map(([category, emojis]) => (
+                <TabsContent key={category} value={category} className="mt-0">
+                  <div className="flex gap-1.5 flex-wrap max-w-[240px]">
+                    {emojis.map((emoji) => (
+                      <button
+                        key={emoji}
+                        type="button"
+                        onClick={() => insertEmoji(emoji)}
+                        className="text-xl hover:bg-muted p-1.5 rounded cursor-pointer transition-colors"
+                      >
+                        {emoji}
+                      </button>
+                    ))}
+                  </div>
+                </TabsContent>
               ))}
-            </div>
+            </Tabs>
           </PopoverContent>
         </Popover>
         

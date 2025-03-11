@@ -10,6 +10,18 @@ interface MessageBubbleProps {
 }
 
 const MessageBubble = ({ message, isMe }: MessageBubbleProps) => {
+  // Function to enhance emoji display in messages
+  const enhanceEmojis = (text: string) => {
+    // Regex to detect standalone emojis (not in text)
+    const standaloneEmojiRegex = /^(\p{Emoji}|\p{Emoji_Presentation}|\p{Extended_Pictographic})+$/u;
+    
+    if (standaloneEmojiRegex.test(text)) {
+      return <span className="text-2xl">{text}</span>;
+    }
+    
+    return <span>{text}</span>;
+  };
+
   return (
     <div 
       className={cn(
@@ -37,7 +49,9 @@ const MessageBubble = ({ message, isMe }: MessageBubbleProps) => {
           )}
         >
           <div className="flex flex-col">
-            <span className="break-words whitespace-pre-wrap">{message.text}</span>
+            <div className="break-words whitespace-pre-wrap">
+              {enhanceEmojis(message.text)}
+            </div>
             {!isMe && (
               <span className="translate-tag flex items-center gap-1 text-xs opacity-70 mt-1 pt-1 border-t border-muted/20">
                 <Globe className="h-3 w-3" />
