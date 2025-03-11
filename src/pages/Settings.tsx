@@ -1,19 +1,126 @@
 
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 import { Separator } from "@/components/ui/separator";
-import { Bell, Lock, Moon, Sun, Languages, User, Shield, Volume2 } from "lucide-react";
+import { Bell, Lock, Moon, Sun, Languages, User, Shield, Volume2, Camera, Loader2 } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
 
 const Settings = () => {
   const [darkMode, setDarkMode] = useState(true);
   const [notifications, setNotifications] = useState(true);
   const [sounds, setSounds] = useState(true);
   const [twoFactor, setTwoFactor] = useState(false);
-  
+  const [profileImage, setProfileImage] = useState("/lovable-uploads/d3b8c3f5-99d7-4e68-a793-894924b80c68.png");
+  const [displayName, setDisplayName] = useState("User");
+  const [email, setEmail] = useState("user@example.com");
+  const [uploading, setUploading] = useState(false);
+  const [saving, setSaving] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const { toast } = useToast();
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    
+    // Check file type
+    if (!file.type.startsWith('image/')) {
+      toast({
+        title: "Invalid file type",
+        description: "Please upload an image file",
+        variant: "destructive"
+      });
+      return;
+    }
+    
+    // Check file size (max 5MB)
+    if (file.size > 5 * 1024 * 1024) {
+      toast({
+        title: "File too large",
+        description: "Please upload an image smaller than 5MB",
+        variant: "destructive"
+      });
+      return;
+    }
+    
+    setUploading(true);
+    
+    // In a real application, this would upload to your backend
+    // For now, we'll just simulate the upload with a timeout
+    setTimeout(() => {
+      // Create a URL for the file
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        if (event.target) {
+          setProfileImage(event.target.result as string);
+        }
+      };
+      reader.readAsDataURL(file);
+      
+      setUploading(false);
+      toast({
+        title: "Profile picture updated",
+        description: "Your profile picture has been updated successfully",
+      });
+    }, 1500);
+  };
+
+  const handleSaveProfile = () => {
+    if (!displayName.trim()) {
+      toast({
+        title: "Error",
+        description: "Display name cannot be empty",
+        variant: "destructive"
+      });
+      return;
+    }
+    
+    if (!email.trim() || !email.includes('@')) {
+      toast({
+        title: "Error",
+        description: "Please enter a valid email address",
+        variant: "destructive"
+      });
+      return;
+    }
+    
+    setSaving(true);
+    
+    // This would normally make a request to your backend
+    setTimeout(() => {
+      setSaving(false);
+      toast({
+        title: "Profile updated",
+        description: "Your profile has been updated successfully",
+      });
+      
+      // This would be where we'd update the user profile in the backend
+    }, 1500);
+  };
+
+  const handleChangePassword = () => {
+    // This would open a password change dialog in a real application
+    toast({
+      title: "Feature coming soon",
+      description: "Password change functionality will be available soon",
+    });
+  };
+
+  const handleToggle2FA = () => {
+    setTwoFactor(!twoFactor);
+    
+    // This would normally make a request to your backend
+    toast({
+      title: twoFactor ? "2FA Disabled" : "2FA Enabled",
+      description: twoFactor 
+        ? "Two-factor authentication has been disabled"
+        : "Two-factor authentication has been enabled. We recommend setting up an authenticator app.",
+    });
+  };
+
   return (
     <div className="max-w-4xl mx-auto p-4 space-y-6 animate-fade-in">
       <Card>
@@ -28,23 +135,65 @@ const Settings = () => {
           <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center">
             <div className="relative">
               <img 
-                src="/lovable-uploads/d3b8c3f5-99d7-4e68-a793-894924b80c68.png" 
+                src={profileImage} 
                 alt="Profile"
                 className="w-20 h-20 rounded-full object-cover border-2 border-primary/20" 
               />
-              <Button size="sm" variant="secondary" className="absolute -bottom-2 -right-2">
-                Change
+              <input 
+                type="file"
+                ref={fileInputRef}
+                className="hidden"
+                accept="image/*"
+                onChange={handleFileChange}
+              />
+              <Button 
+                size="sm" 
+                variant="secondary" 
+                className="absolute -bottom-2 -right-2"
+                onClick={() => fileInputRef.current?.click()}
+                disabled={uploading}
+              >
+                {uploading ? (
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                ) : (
+                  <Camera className="h-4 w-4" />
+                )}
               </Button>
             </div>
             <div className="space-y-3 flex-grow">
               <div className="grid gap-2">
                 <Label htmlFor="name">Display Name</Label>
-                <Input id="name" defaultValue="User" className="max-w-md" />
+                <Input 
+                  id="name" 
+                  value={displayName}
+                  onChange={(e) => setDisplayName(e.target.value)}
+                  className="max-w-md" 
+                />
               </div>
               <div className="grid gap-2">
                 <Label htmlFor="email">Email</Label>
-                <Input id="email" defaultValue="user@example.com" className="max-w-md" />
+                <Input 
+                  id="email" 
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  className="max-w-md" 
+                />
               </div>
+              <Button 
+                onClick={handleSaveProfile}
+                disabled={saving}
+                className="mt-2"
+              >
+                {saving ? (
+                  <>
+                    <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                    Saving...
+                  </>
+                ) : (
+                  "Save Changes"
+                )}
+              </Button>
             </div>
           </div>
         </CardContent>
@@ -128,12 +277,12 @@ const Settings = () => {
             <Switch 
               id="two-factor" 
               checked={twoFactor} 
-              onCheckedChange={setTwoFactor} 
+              onCheckedChange={handleToggle2FA} 
             />
           </div>
           
           <div className="pt-2">
-            <Button variant="outline">Change Password</Button>
+            <Button variant="outline" onClick={handleChangePassword}>Change Password</Button>
           </div>
         </CardContent>
       </Card>

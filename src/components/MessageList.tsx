@@ -50,6 +50,7 @@ const MessageList = () => {
             <MessageBubble
               message={message}
               isMe={message.sender === 'me'}
+              isEmojiOnly={isEmojiOnly(message.text)}
             />
           </div>
         ))}
