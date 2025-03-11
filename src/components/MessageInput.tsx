@@ -3,7 +3,7 @@ import React, { useState, useRef } from 'react';
 import { useChat } from '@/contexts/ChatContext';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { Smile, Send, Paperclip, Mic, Image, Camera, File } from 'lucide-react';
+import { Smile, Send, Paperclip, Mic, Image, Camera, File, Loader2 } from 'lucide-react';
 import { 
   Popover, 
   PopoverContent, 
@@ -12,14 +12,27 @@ import {
 
 const MessageInput = () => {
   const [message, setMessage] = useState('');
-  const { sendMessage, activeChat } = useChat();
+  const [isTranslating, setIsTranslating] = useState(false);
+  const { sendMessage, activeChat, connectionStatus } = useChat();
   const inputRef = useRef<HTMLInputElement>(null);
   
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (message.trim()) {
+    if (!message.trim()) return;
+    
+    // In a real implementation, this is where we would show that the message is being translated
+    setIsTranslating(true);
+    
+    try {
+      // Simulate NLP translation processing delay
+      // In the real implementation, this would be handled by the Spring Boot backend
+      await new Promise(resolve => setTimeout(resolve, 500));
+      
+      // Send the message
       sendMessage(message);
       setMessage('');
+    } finally {
+      setIsTranslating(false);
     }
   };
 
@@ -42,6 +55,13 @@ const MessageInput = () => {
   return (
     <form onSubmit={handleSubmit} className="p-3 border-t border-border/10 bg-background">
       <div className="max-w-3xl mx-auto flex items-center gap-2">
+        {connectionStatus !== 'connected' && (
+          <div className="text-xs flex items-center gap-1 text-yellow-500 animate-pulse">
+            <Loader2 className="h-3 w-3 animate-spin" />
+            <span>{connectionStatus === 'connecting' ? 'Connecting...' : 'Disconnected'}</span>
+          </div>
+        )}
+        
         <Popover>
           <PopoverTrigger asChild>
             <Button 
@@ -49,6 +69,7 @@ const MessageInput = () => {
               variant="ghost" 
               size="icon" 
               className="flex-shrink-0 text-muted-foreground hover:text-foreground rounded-full transition-colors"
+              disabled={connectionStatus !== 'connected'}
             >
               <Paperclip className="h-5 w-5" />
             </Button>
@@ -78,6 +99,7 @@ const MessageInput = () => {
               variant="ghost" 
               size="icon" 
               className="flex-shrink-0 text-muted-foreground hover:text-foreground rounded-full transition-colors"
+              disabled={connectionStatus !== 'connected'}
             >
               <Smile className="h-5 w-5" />
             </Button>
@@ -102,8 +124,9 @@ const MessageInput = () => {
           ref={inputRef}
           value={message}
           onChange={(e) => setMessage(e.target.value)}
-          placeholder="Type a message..."
+          placeholder={connectionStatus === 'connected' ? "Type a message..." : "Waiting for connection..."}
           className="flex-1 bg-secondary/30 border-border/10 focus-visible:ring-primary/20 animate-fade-in"
+          disabled={connectionStatus !== 'connected'}
           autoFocus
         />
         
@@ -112,6 +135,7 @@ const MessageInput = () => {
           variant="ghost" 
           size="icon" 
           className="flex-shrink-0 text-muted-foreground hover:text-foreground rounded-full transition-colors"
+          disabled={connectionStatus !== 'connected'}
         >
           <Mic className="h-5 w-5" />
         </Button>
@@ -119,12 +143,24 @@ const MessageInput = () => {
         <Button 
           type="submit" 
           size="icon" 
-          disabled={!message.trim()}
+          disabled={!message.trim() || connectionStatus !== 'connected' || isTranslating}
           className="flex-shrink-0 rounded-full transition-all hover:shadow-lg hover:scale-105 active:scale-95"
         >
-          <Send className="h-5 w-5" />
+          {isTranslating ? (
+            <Loader2 className="h-5 w-5 animate-spin" />
+          ) : (
+            <Send className="h-5 w-5" />
+          )}
         </Button>
       </div>
+      
+      {/* This section would show the current translation service status */}
+      {activeChat && connectionStatus === 'connected' && (
+        <div className="max-w-3xl mx-auto mt-1 text-xs text-muted-foreground flex items-center gap-1 pl-2">
+          <Globe className="h-3 w-3" />
+          <span>Translating to {activeChat.language} using NLP</span>
+        </div>
+      )}
     </form>
   );
 };

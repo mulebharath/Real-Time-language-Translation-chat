@@ -2,7 +2,7 @@
 import React from 'react';
 import { cn } from '@/lib/utils';
 import { Message } from '@/lib/data';
-import { Check } from 'lucide-react';
+import { Check, Globe } from 'lucide-react';
 
 interface MessageBubbleProps {
   message: Message;
@@ -39,8 +39,9 @@ const MessageBubble = ({ message, isMe }: MessageBubbleProps) => {
           <div className="flex flex-col">
             <span className="break-words whitespace-pre-wrap">{message.text}</span>
             {!isMe && (
-              <span className="translate-tag">
-                Translated from {message.sender}'s language
+              <span className="translate-tag flex items-center gap-1 text-xs opacity-70 mt-1 pt-1 border-t border-muted/20">
+                <Globe className="h-3 w-3" />
+                NLP translated from {message.sender}'s language
               </span>
             )}
           </div>

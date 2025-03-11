@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
-import { Globe, Lock, Mail, MessageCircle } from 'lucide-react';
+import { Globe, Lock, Mail, MessageCircle, Server, Database } from 'lucide-react';
 import { Separator } from '@/components/ui/separator';
 
 const Login = () => {
@@ -30,19 +30,45 @@ const Login = () => {
       setIsLoading(true);
       
       // Simulate connection to Spring Boot backend
-      // In the actual implementation, this would connect to a Java Spring Boot backend
+      toast({
+        title: "Connecting",
+        description: "Authenticating with Spring Boot backend...",
+      });
+      
+      // In actual implementation, this would be a fetch call to the Spring Boot login endpoint
+      // const response = await fetch('http://localhost:8080/api/auth/login', {
+      //   method: 'POST',
+      //   headers: {
+      //     'Content-Type': 'application/json',
+      //   },
+      //   body: JSON.stringify({ email, password }),
+      // });
+      
+      // if (!response.ok) {
+      //   throw new Error('Login failed');
+      // }
+      
+      // const data = await response.json();
+      // localStorage.setItem('authToken', data.token);
+      
+      // For demo purposes, simulate a successful authentication
       await new Promise(resolve => setTimeout(resolve, 1000));
       
       // Store authentication token that would come from the backend
       localStorage.setItem('isLoggedIn', 'true');
+      localStorage.setItem('authToken', 'demo-jwt-token');
       
       toast({
         title: "Success",
-        description: "Login successful! Connecting to real-time translation service...",
+        description: "Login successful! Initializing WebSocket connection...",
       });
       
       // Simulate Socket.io connection initialization
-      // In the actual implementation, this would establish a WebSocket connection
+      toast({
+        title: "Connecting",
+        description: "Establishing real-time connection with translation service...",
+      });
+      
       await new Promise(resolve => setTimeout(resolve, 1000));
       
       navigate('/');
@@ -155,15 +181,20 @@ const Login = () => {
           <div className="bg-secondary/30 p-3 rounded-lg text-xs text-muted-foreground space-y-2">
             <div className="font-medium text-foreground">Technology Stack:</div>
             <div className="flex items-center gap-1">
+              <Server className="h-3 w-3" />
+              <span>Java Spring Boot backend with WebSocket protocol</span>
+            </div>
+            <div className="flex items-center gap-1">
               <MessageCircle className="h-3 w-3" />
-              <span>React Frontend with Socket.io for real-time chat</span>
+              <span>Socket.io for real-time chat translation</span>
             </div>
             <div className="flex items-center gap-1">
               <Globe className="h-3 w-3" />
-              <span>Google Translate API for message translation</span>
+              <span>NLP & Google Translate API for message translation</span>
             </div>
-            <div className="text-xs italic">
-              Coming soon: Java Spring Boot backend with WebSocket support
+            <div className="flex items-center gap-1">
+              <Database className="h-3 w-3" />
+              <span>MongoDB & Redis for data storage and caching</span>
             </div>
           </div>
         </div>
