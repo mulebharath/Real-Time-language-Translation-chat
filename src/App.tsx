@@ -28,17 +28,6 @@ const RequireAuth = ({ children }: { children: JSX.Element }) => {
   return children;
 };
 
-// Check if user is already logged in
-const AlreadyLoggedIn = ({ children }: { children: JSX.Element }) => {
-  const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
-  
-  if (isLoggedIn) {
-    return <Navigate to="/" replace />;
-  }
-  
-  return children;
-};
-
 const App = () => {
   const [isLoading, setIsLoading] = useState(true);
   

@@ -155,44 +155,4 @@
   .avatar-glow {
     box-shadow: 0 0 10px rgba(23, 111, 255, 0.5);
   }
-  
-  /* Emoji styling */
-  .emoji-only-message {
-    @apply text-2xl py-3;
-  }
-  
-  /* Improved file upload UI */
-  .file-upload-zone {
-    @apply border-2 border-dashed rounded-lg p-6 border-primary/30 hover:border-primary/60 transition-all cursor-pointer bg-background/50 flex flex-col items-center justify-center;
-  }
-  
-  /* Light mode improvements for better contrast */
-  .light .text-muted-foreground {
-    @apply text-gray-600;
-  }
-  
-  .light .sidebar-gradient {
-    background: linear-gradient(135deg, rgba(240,240,245,1) 0%, rgba(225,225,235,1) 100%);
-  }
-}
-
-/* Animation definitions */
-@keyframes fade-in {
-  0% {
-    opacity: 0;
-    transform: translateY(10px);
-  }
-  100% {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@keyframes pulse-light {
-  0%, 100% {
-    opacity: 1;
-  }
-  50% {
-    opacity: 0.5;
-  }
 }
