@@ -5,11 +5,10 @@ import { useChat } from '@/contexts/ChatContext';
 import ConversationHeader from '@/components/ConversationHeader';
 import MessageList from '@/components/MessageList';
 import MessageInput from '@/components/MessageInput';
-import { Loader2 } from 'lucide-react';
 
 const ChatView = () => {
   const { chatId } = useParams<{ chatId: string }>();
-  const { setActiveChatId, chats, connectionStatus } = useChat();
+  const { setActiveChatId, chats } = useChat();
   const navigate = useNavigate();
   
   useEffect(() => {
@@ -25,38 +24,13 @@ const ChatView = () => {
     }
     
     setActiveChatId(chatId);
-    
-    // This would be where we'd connect to the specific chat channel via Socket.io
-    console.log(`Connected to chat ${chatId}, connection status: ${connectionStatus}`);
-    
-    // In a real implementation, this is where we'd join the specific chat room
-    // socketRef.current.emit('join_chat', { chatId });
-    
-    return () => {
-      // Cleanup: leave chat room when component unmounts
-      // socketRef.current.emit('leave_chat', { chatId });
-    };
-  }, [chatId, chats, navigate, setActiveChatId, connectionStatus]);
-  
-  if (!chatId) return null;
+  }, [chatId, chats, navigate, setActiveChatId]);
   
   return (
     <div className="flex flex-col h-full">
       <ConversationHeader />
-      
-      {connectionStatus === 'connecting' ? (
-        <div className="flex-1 flex items-center justify-center">
-          <div className="flex flex-col items-center gap-2 text-muted-foreground">
-            <Loader2 className="h-8 w-8 animate-spin" />
-            <span>Connecting to chat server...</span>
-          </div>
-        </div>
-      ) : (
-        <>
-          <MessageList />
-          <MessageInput />
-        </>
-      )}
+      <MessageList />
+      <MessageInput />
     </div>
   );
 };

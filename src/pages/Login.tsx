@@ -4,24 +4,13 @@ import { useNavigate } from 'react-router-dom';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
-import { Globe, Lock, Mail, User } from 'lucide-react';
+import { Globe, Lock, Mail, MessageCircle, Server, Database } from 'lucide-react';
 import { Separator } from '@/components/ui/separator';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 
 const Login = () => {
-  // Login state
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  
-  // Signup state
-  const [signupEmail, setSignupEmail] = useState('');
-  const [signupPassword, setSignupPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
-  const [name, setName] = useState('');
-  const [isSigningUp, setIsSigningUp] = useState(false);
-  
   const { toast } = useToast();
   const navigate = useNavigate();
 
@@ -40,21 +29,44 @@ const Login = () => {
     try {
       setIsLoading(true);
       
+      // Simulate connection to Spring Boot backend
       toast({
         title: "Connecting",
-        description: "Authenticating with server...",
+        description: "Authenticating with Spring Boot backend...",
       });
       
-      // Simulate authentication
+      // In actual implementation, this would be a fetch call to the Spring Boot login endpoint
+      // const response = await fetch('http://localhost:8080/api/auth/login', {
+      //   method: 'POST',
+      //   headers: {
+      //     'Content-Type': 'application/json',
+      //   },
+      //   body: JSON.stringify({ email, password }),
+      // });
+      
+      // if (!response.ok) {
+      //   throw new Error('Login failed');
+      // }
+      
+      // const data = await response.json();
+      // localStorage.setItem('authToken', data.token);
+      
+      // For demo purposes, simulate a successful authentication
       await new Promise(resolve => setTimeout(resolve, 1000));
       
-      // Store auth token that would come from the backend
+      // Store authentication token that would come from the backend
       localStorage.setItem('isLoggedIn', 'true');
       localStorage.setItem('authToken', 'demo-jwt-token');
       
       toast({
         title: "Success",
-        description: "Login successful! Connecting to messaging service...",
+        description: "Login successful! Initializing WebSocket connection...",
+      });
+      
+      // Simulate Socket.io connection initialization
+      toast({
+        title: "Connecting",
+        description: "Establishing real-time connection with translation service...",
       });
       
       await new Promise(resolve => setTimeout(resolve, 1000));
@@ -68,60 +80,6 @@ const Login = () => {
       });
     } finally {
       setIsLoading(false);
-    }
-  };
-
-  const handleSignup = async (e: React.FormEvent) => {
-    e.preventDefault();
-    
-    if (!name || !signupEmail || !signupPassword || !confirmPassword) {
-      toast({
-        title: "Error",
-        description: "Please fill in all fields",
-        variant: "destructive",
-      });
-      return;
-    }
-    
-    if (signupPassword !== confirmPassword) {
-      toast({
-        title: "Error",
-        description: "Passwords do not match",
-        variant: "destructive",
-      });
-      return;
-    }
-    
-    try {
-      setIsSigningUp(true);
-      
-      toast({
-        title: "Creating Account",
-        description: "Setting up your new account...",
-      });
-      
-      // Simulate account creation
-      await new Promise(resolve => setTimeout(resolve, 1500));
-      
-      // Store auth token that would come from the backend
-      localStorage.setItem('isLoggedIn', 'true');
-      localStorage.setItem('authToken', 'demo-jwt-token');
-      localStorage.setItem('userName', name);
-      
-      toast({
-        title: "Success",
-        description: "Account created successfully! Welcome to ChatSphere.",
-      });
-      
-      navigate('/');
-    } catch (error) {
-      toast({
-        title: "Signup Failed",
-        description: "There was an error creating your account. Please try again.",
-        variant: "destructive",
-      });
-    } finally {
-      setIsSigningUp(false);
     }
   };
 
@@ -146,157 +104,99 @@ const Login = () => {
       </div>
       
       <div className="flex-1 flex items-center justify-center px-4">
-        <div className="w-full max-w-md space-y-6 animate-fade-in">
-          <Tabs defaultValue="login" className="w-full">
-            <TabsList className="grid w-full grid-cols-2 mb-4">
-              <TabsTrigger value="login">Login</TabsTrigger>
-              <TabsTrigger value="signup">Sign Up</TabsTrigger>
-            </TabsList>
+        <div className="w-full max-w-md space-y-6 p-6 bg-card rounded-xl border border-border/40 shadow-xl animate-fade-in">
+          <div className="space-y-2 text-center">
+            <h2 className="text-3xl font-bold">Welcome Back</h2>
+            <p className="text-muted-foreground">Sign in to continue to ChatSphere</p>
+          </div>
+          
+          <form onSubmit={handleLogin} className="space-y-4">
+            <div className="space-y-2">
+              <div className="relative">
+                <Mail className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                <Input
+                  type="email"
+                  placeholder="Email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  className="pl-10"
+                />
+              </div>
+            </div>
             
-            <TabsContent value="login">
-              <Card>
-                <CardHeader>
-                  <CardTitle className="text-2xl font-bold text-center">Welcome Back</CardTitle>
-                  <CardDescription className="text-center">
-                    Sign in to continue to ChatSphere
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <form onSubmit={handleLogin} className="space-y-4">
-                    <div className="space-y-2">
-                      <div className="relative">
-                        <Mail className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                        <Input
-                          type="email"
-                          placeholder="Email"
-                          value={email}
-                          onChange={(e) => setEmail(e.target.value)}
-                          className="pl-10"
-                        />
-                      </div>
-                    </div>
-                    
-                    <div className="space-y-2">
-                      <div className="relative">
-                        <Lock className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                        <Input
-                          type="password"
-                          placeholder="Password"
-                          value={password}
-                          onChange={(e) => setPassword(e.target.value)}
-                          className="pl-10"
-                        />
-                      </div>
-                      <div className="flex justify-end">
-                        <Button variant="link" className="h-auto p-0 text-xs">
-                          Forgot password?
-                        </Button>
-                      </div>
-                    </div>
-                    
-                    <Button 
-                      type="submit" 
-                      className="w-full"
-                      disabled={isLoading}
-                    >
-                      {isLoading ? 'Connecting...' : 'Sign In'}
-                    </Button>
-                    
-                    <div className="relative">
-                      <div className="absolute inset-0 flex items-center">
-                        <Separator className="w-full" />
-                      </div>
-                      <div className="relative flex justify-center text-xs uppercase">
-                        <span className="bg-card px-2 text-muted-foreground">Or continue with</span>
-                      </div>
-                    </div>
-                    
-                    <Button 
-                      type="button" 
-                      variant="outline" 
-                      className="w-full"
-                      onClick={demoLogin}
-                    >
-                      Demo Account
-                    </Button>
-                  </form>
-                </CardContent>
-              </Card>
-            </TabsContent>
+            <div className="space-y-2">
+              <div className="relative">
+                <Lock className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                <Input
+                  type="password"
+                  placeholder="Password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  className="pl-10"
+                />
+              </div>
+              <div className="flex justify-end">
+                <Button variant="link" className="h-auto p-0 text-xs">
+                  Forgot password?
+                </Button>
+              </div>
+            </div>
             
-            <TabsContent value="signup">
-              <Card>
-                <CardHeader>
-                  <CardTitle className="text-2xl font-bold text-center">Create Account</CardTitle>
-                  <CardDescription className="text-center">
-                    Join ChatSphere to connect across languages
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <form onSubmit={handleSignup} className="space-y-4">
-                    <div className="space-y-2">
-                      <div className="relative">
-                        <User className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                        <Input
-                          placeholder="Full Name"
-                          value={name}
-                          onChange={(e) => setName(e.target.value)}
-                          className="pl-10"
-                        />
-                      </div>
-                    </div>
-                    
-                    <div className="space-y-2">
-                      <div className="relative">
-                        <Mail className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                        <Input
-                          type="email"
-                          placeholder="Email"
-                          value={signupEmail}
-                          onChange={(e) => setSignupEmail(e.target.value)}
-                          className="pl-10"
-                        />
-                      </div>
-                    </div>
-                    
-                    <div className="space-y-2">
-                      <div className="relative">
-                        <Lock className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                        <Input
-                          type="password"
-                          placeholder="Password"
-                          value={signupPassword}
-                          onChange={(e) => setSignupPassword(e.target.value)}
-                          className="pl-10"
-                        />
-                      </div>
-                    </div>
-                    
-                    <div className="space-y-2">
-                      <div className="relative">
-                        <Lock className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                        <Input
-                          type="password"
-                          placeholder="Confirm Password"
-                          value={confirmPassword}
-                          onChange={(e) => setConfirmPassword(e.target.value)}
-                          className="pl-10"
-                        />
-                      </div>
-                    </div>
-                    
-                    <Button 
-                      type="submit" 
-                      className="w-full"
-                      disabled={isSigningUp}
-                    >
-                      {isSigningUp ? 'Creating Account...' : 'Create Account'}
-                    </Button>
-                  </form>
-                </CardContent>
-              </Card>
-            </TabsContent>
-          </Tabs>
+            <Button 
+              type="submit" 
+              className="w-full"
+              disabled={isLoading}
+            >
+              {isLoading ? 'Connecting...' : 'Sign In'}
+            </Button>
+            
+            <div className="relative">
+              <div className="absolute inset-0 flex items-center">
+                <Separator className="w-full" />
+              </div>
+              <div className="relative flex justify-center text-xs uppercase">
+                <span className="bg-card px-2 text-muted-foreground">Or continue with</span>
+              </div>
+            </div>
+            
+            <Button 
+              type="button" 
+              variant="outline" 
+              className="w-full"
+              onClick={demoLogin}
+            >
+              Demo Account
+            </Button>
+          </form>
+          
+          <div className="pt-4 text-center text-sm">
+            <p className="text-muted-foreground">
+              Don't have an account?{' '}
+              <Button variant="link" className="h-auto p-0" onClick={() => navigate('/login')}>
+                Sign up
+              </Button>
+            </p>
+          </div>
+          
+          <div className="bg-secondary/30 p-3 rounded-lg text-xs text-muted-foreground space-y-2">
+            <div className="font-medium text-foreground">Technology Stack:</div>
+            <div className="flex items-center gap-1">
+              <Server className="h-3 w-3" />
+              <span>Java Spring Boot backend with WebSocket protocol</span>
+            </div>
+            <div className="flex items-center gap-1">
+              <MessageCircle className="h-3 w-3" />
+              <span>Socket.io for real-time chat translation</span>
+            </div>
+            <div className="flex items-center gap-1">
+              <Globe className="h-3 w-3" />
+              <span>NLP & Google Translate API for message translation</span>
+            </div>
+            <div className="flex items-center gap-1">
+              <Database className="h-3 w-3" />
+              <span>MongoDB & Redis for data storage and caching</span>
+            </div>
+          </div>
         </div>
       </div>
     </div>
