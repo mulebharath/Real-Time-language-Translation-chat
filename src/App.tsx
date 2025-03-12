@@ -41,11 +41,14 @@ const AlreadyLoggedIn = ({ children }: { children: JSX.Element }) => {
 
 const App = () => {
   const [isLoading, setIsLoading] = useState(true);
+  const [hasCheckedAuth, setHasCheckedAuth] = useState(false);
+  const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
   
   useEffect(() => {
     // Simulate initial auth check
     setTimeout(() => {
       setIsLoading(false);
+      setHasCheckedAuth(true);
     }, 500);
   }, []);
   
@@ -92,6 +95,7 @@ const App = () => {
               </RequireAuth>
             } />
             <Route path="/" element={
+              hasCheckedAuth && !isLoggedIn ? <Navigate to="/login" replace /> : 
               <RequireAuth>
                 <Index />
               </RequireAuth>
