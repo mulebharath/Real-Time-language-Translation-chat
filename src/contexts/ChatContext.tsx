@@ -3,10 +3,9 @@ import React, { createContext, useContext, useState, useEffect, ReactNode, useRe
 import { nanoid } from 'nanoid';
 import { useToast } from '@/hooks/use-toast';
 import { toast as sonnerToast } from 'sonner';
-import { initialChats, sampleResponses, Chat, Message, Language, translateText } from '@/lib/data';
+import { initialChats, Chat, Message, Language } from '@/lib/data';
 import { useNavigate } from 'react-router-dom';
-// Placeholder for Socket.io - will be implemented when backend is ready
-// import { io, Socket } from 'socket.io-client';
+import { Client } from '@stomp/stompjs';
 
 interface ChatContextProps {
   chats: Chat[];
@@ -23,14 +22,18 @@ interface ChatContextProps {
 
 const ChatContext = createContext<ChatContextProps | undefined>(undefined);
 
+// Spring Boot WebSocket server URL
+const WEBSOCKET_URL = 'http://localhost:8080/ws'; // Adjust this to your Spring Boot server URL
+
 export const ChatProvider = ({ children }: { children: ReactNode }) => {
   const [chats, setChats] = useState<Chat[]>(initialChats);
   const [activeChatId, setActiveChatId] = useState<string | null>(null);
   const [userLanguage, setUserLanguage] = useState<Language>('English');
   const [isChatListOpen, setIsChatListOpen] = useState(true);
   const [connectionStatus, setConnectionStatus] = useState<'connected' | 'connecting' | 'disconnected'>('disconnected');
-  // Socket.io reference - will be used when backend is ready
-  const socketRef = useRef<any>(null);
+  
+  // STOMP client reference
+  const stompClientRef = useRef<Client | null>(null);
   const { toast } = useToast();
   const navigate = useNavigate();
 
@@ -38,51 +41,137 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
     ? chats.find(chat => chat.id === activeChatId) || null 
     : null;
 
-  // Simulating Socket.io connection for now
+  // Initialize WebSocket connection
   useEffect(() => {
     const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
     
     if (isLoggedIn) {
       setConnectionStatus('connecting');
       
-      // Simulate WebSocket connection
-      const connectionTimeout = setTimeout(() => {
-        setConnectionStatus('connected');
-        toast({
-          title: "Connected",
-          description: "Successfully connected to translation service",
+      try {
+        // Initialize STOMP client
+        const client = new Client({
+          brokerURL: WEBSOCKET_URL,
+          connectHeaders: {
+            // Add auth token if needed
+            // 'Authorization': 'Bearer ' + localStorage.getItem('authToken')
+          },
+          debug: function (str) {
+            console.log('STOMP: ' + str);
+          },
+          reconnectDelay: 5000,
+          heartbeatIncoming: 4000,
+          heartbeatOutgoing: 4000
         });
+
+        // Connect event handlers
+        client.onConnect = (frame) => {
+          setConnectionStatus('connected');
+          toast({
+            title: "Connected",
+            description: "Successfully connected to translation service",
+          });
+          
+          // Subscribe to user's chats
+          chats.forEach(chat => {
+            client.subscribe(`/topic/chat/${chat.id}`, message => {
+              const receivedMessage = JSON.parse(message.body);
+              
+              // Update chat with new message
+              setChats(prevChats => prevChats.map(c => 
+                c.id === receivedMessage.chatId 
+                  ? { 
+                      ...c, 
+                      messages: [...c.messages, {
+                        id: receivedMessage.id || nanoid(),
+                        sender: receivedMessage.sender,
+                        text: receivedMessage.text,
+                        timestamp: receivedMessage.timestamp,
+                        translatedText: receivedMessage.translatedText,
+                        delivered: true,
+                        read: c.id === activeChatId,
+                      }] 
+                    } 
+                  : c
+              ));
+              
+              // Show notification if not active chat
+              if (receivedMessage.chatId !== activeChatId) {
+                const senderChat = chats.find(c => c.id === receivedMessage.chatId);
+                if (senderChat) {
+                  showNotification(senderChat.name, receivedMessage.translatedText, receivedMessage.chatId);
+                }
+              }
+            });
+          });
+        };
+
+        client.onStompError = (frame) => {
+          console.error('STOMP error', frame);
+          setConnectionStatus('disconnected');
+          toast({
+            title: "Connection Error",
+            description: "Failed to connect to chat server",
+            variant: "destructive"
+          });
+        };
         
-        // This is where we would initialize the actual Socket.io connection
-        // socketRef.current = io('http://localhost:8080', {
-        //   auth: {
-        //     token: localStorage.getItem('authToken')
-        //   }
-        // });
-        
-        // socketRef.current.on('connect', () => {
-        //   setConnectionStatus('connected');
-        // });
-        
-        // socketRef.current.on('message', (data) => {
-        //   // Handle incoming messages
-        // });
-        
-        // socketRef.current.on('disconnect', () => {
-        //   setConnectionStatus('disconnected');
-        // });
-        
-      }, 1500);
+        client.onWebSocketClose = () => {
+          setConnectionStatus('disconnected');
+          toast({
+            title: "Disconnected",
+            description: "Lost connection to chat server",
+            variant: "destructive"
+          });
+        };
+
+        // Start connection
+        client.activate();
+        stompClientRef.current = client;
+      } catch (error) {
+        console.error('WebSocket connection error:', error);
+        setConnectionStatus('disconnected');
+        toast({
+          title: "Connection Error",
+          description: "Failed to connect to chat server",
+          variant: "destructive"
+        });
+      }
       
       return () => {
-        clearTimeout(connectionTimeout);
-        // Clean up socket connection when component unmounts
-        // if (socketRef.current) {
-        //   socketRef.current.disconnect();
-        // }
+        // Cleanup WebSocket connection
+        if (stompClientRef.current && stompClientRef.current.connected) {
+          stompClientRef.current.deactivate();
+        }
       };
     }
-  }, [toast]);
+  }, [toast, chats]);
+
+  const showNotification = (sender: string, message: string, chatId: string) => {
+    if (Notification.permission === 'granted') {
+      try {
+        new Notification(`New message from ${sender}`, {
+          body: message,
+          icon: '/logo.png'
+        });
+      } catch (e) {
+        fallbackToastNotification(sender, message, chatId);
+      }
+    } else {
+      fallbackToastNotification(sender, message, chatId);
+    }
+  };
+
+  const fallbackToastNotification = (sender: string, message: string, chatId: string) => {
+    sonnerToast(`New message from ${sender}`, {
+      description: message,
+      action: {
+        label: "View",
+        onClick: () => navigate(`/chat/${chatId}`),
+      },
+      duration: 5000,
+    });
+  };
 
   const toggleChatList = () => {
     setIsChatListOpen(!isChatListOpen);
@@ -102,125 +191,41 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
       sender: 'me',
       text,
       timestamp,
-      translatedText: translateText(text, 'English', activeChat.language),
+      translatedText: text, // Will be translated by server
       delivered: true,
       read: false,
     };
     
+    // Add message to local state immediately (optimistic update)
     setChats(prevChats => prevChats.map(chat => 
       chat.id === activeChatId 
         ? { ...chat, messages: [...chat.messages, newMessage] } 
         : chat
     ));
     
-    // This would be where we send the message to the Spring Boot backend via Socket.io
-    // if (socketRef.current && socketRef.current.connected) {
-    //   socketRef.current.emit('send_message', {
-    //     chatId: activeChatId,
-    //     message: text,
-    //     sourceLanguage: 'English',
-    //     targetLanguage: activeChat.language
-    //   });
-    // }
-    
-    // For now, simulate a response after a delay
-    setTimeout(() => {
-      const responseText = sampleResponses[Math.floor(Math.random() * sampleResponses.length)];
-      // This would normally come from the Spring Boot backend with NLP translation
-      const translatedResponse = translateText(responseText, 'English', activeChat.language);
-      
-      const responseMessage: Message = {
-        id: nanoid(),
-        sender: activeChat.name,
-        text: translatedResponse,
-        timestamp,
-        translatedText: responseText,
-        delivered: true,
-        read: true,
-      };
-      
-      setChats(prevChats => prevChats.map(chat => 
-        chat.id === activeChatId 
-          ? { ...chat, messages: [...chat.messages, responseMessage] } 
-          : chat
-      ));
-    }, 1500);
+    // Send message to Spring Boot backend via STOMP
+    if (stompClientRef.current && stompClientRef.current.connected) {
+      stompClientRef.current.publish({
+        destination: `/app/chat/${activeChatId}/send`,
+        body: JSON.stringify({
+          chatId: activeChatId,
+          content: text,
+          sourceLanguage: userLanguage,
+          targetLanguage: activeChat.language,
+          sender: 'me',
+          timestamp
+        })
+      });
+    } else {
+      // Fallback for disconnected state
+      toast({
+        title: "Not Connected",
+        description: "Message not sent. Please check your connection.",
+        variant: "destructive"
+      });
+    }
   };
   
-  // Simulate incoming messages periodically (would be replaced by actual Socket.io events)
-  useEffect(() => {
-    if (connectionStatus !== 'connected') return;
-    
-    const interval = setInterval(() => {
-      // Randomly select a chat
-      const randomChatIndex = Math.floor(Math.random() * chats.length);
-      const randomChat = chats[randomChatIndex];
-      
-      // Skip if this is the active chat
-      if (randomChat.id === activeChatId) return;
-      
-      const currentTime = new Date();
-      const hours = currentTime.getHours() % 12 || 12;
-      const minutes = currentTime.getMinutes().toString().padStart(2, '0');
-      const ampm = currentTime.getHours() >= 12 ? 'PM' : 'AM';
-      const timestamp = `${hours}:${minutes} ${ampm}`;
-      
-      const randomResponse = sampleResponses[Math.floor(Math.random() * sampleResponses.length)];
-      // This would normally be translated by the Spring Boot backend using NLP
-      const translatedResponse = translateText(randomResponse, 'English', randomChat.language);
-      
-      const newMessage: Message = {
-        id: nanoid(),
-        sender: randomChat.name,
-        text: translatedResponse,
-        timestamp,
-        translatedText: randomResponse,
-        delivered: true,
-        read: false,
-      };
-      
-      setChats(prevChats => prevChats.map(chat => 
-        chat.id === randomChat.id 
-          ? { ...chat, messages: [...chat.messages, newMessage] } 
-          : chat
-      ));
-      
-      // Use the browser Notifications API (placeholder for Push API integration)
-      if (Notification.permission === 'granted') {
-        try {
-          // This would be replaced by proper Push API integration
-          new Notification(`New message from ${randomChat.name}`, {
-            body: randomResponse,
-            icon: '/logo.png'
-          });
-        } catch (e) {
-          // Fallback to toast notification
-          sonnerToast(`New message from ${randomChat.name}`, {
-            description: randomResponse,
-            action: {
-              label: "View",
-              onClick: () => navigate(`/chat/${randomChat.id}`),
-            },
-            duration: 5000,
-          });
-        }
-      } else {
-        // Fallback to toast notification
-        sonnerToast(`New message from ${randomChat.name}`, {
-          description: randomResponse,
-          action: {
-            label: "View",
-            onClick: () => navigate(`/chat/${randomChat.id}`),
-          },
-          duration: 5000,
-        });
-      }
-      
-    }, 30000); // Every 30 seconds
-    
-    return () => clearInterval(interval);
-  }, [chats, activeChatId, navigate, connectionStatus]);
-
   // Request notification permission when the app loads
   useEffect(() => {
     if ('Notification' in window && Notification.permission === 'default') {
@@ -253,4 +258,3 @@ export const useChat = () => {
   }
   return context;
 };
-

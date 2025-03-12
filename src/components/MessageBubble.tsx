@@ -23,6 +23,9 @@ const MessageBubble = ({ message, isMe, isEmojiOnly }: MessageBubbleProps) => {
     return <span>{text}</span>;
   };
 
+  // Check if text and translatedText are different
+  const isTranslated = message.text !== message.translatedText;
+
   return (
     <div 
       className={cn(
@@ -52,9 +55,9 @@ const MessageBubble = ({ message, isMe, isEmojiOnly }: MessageBubbleProps) => {
         >
           <div className="flex flex-col">
             <div className="break-words whitespace-pre-wrap">
-              {enhanceEmojis(message.text)}
+              {enhanceEmojis(isMe ? message.text : message.translatedText)}
             </div>
-            {!isMe && (
+            {!isMe && isTranslated && (
               <span className="translate-tag flex items-center gap-1 text-xs opacity-70 mt-1 pt-1 border-t border-muted/20">
                 <Globe className="h-3 w-3" />
                 NLP translated from {message.sender}'s language

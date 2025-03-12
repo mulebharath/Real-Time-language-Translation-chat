@@ -26,15 +26,11 @@ const ChatView = () => {
     
     setActiveChatId(chatId);
     
-    // This would be where we'd connect to the specific chat channel via Socket.io
+    // This would be handled by ChatContext's WebSocket subscription
     console.log(`Connected to chat ${chatId}, connection status: ${connectionStatus}`);
     
-    // In a real implementation, this is where we'd join the specific chat room
-    // socketRef.current.emit('join_chat', { chatId });
-    
     return () => {
-      // Cleanup: leave chat room when component unmounts
-      // socketRef.current.emit('leave_chat', { chatId });
+      // Cleanup handled by ChatContext
     };
   }, [chatId, chats, navigate, setActiveChatId, connectionStatus]);
   
