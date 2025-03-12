@@ -1,6 +1,4 @@
 
-/// <reference types="vite/client" />
-
 interface SpeechRecognitionEvent extends Event {
   results: SpeechRecognitionResultList;
   resultIndex: number;
@@ -49,3 +47,5 @@ declare global {
     webkitSpeechRecognition: SpeechRecognitionStatic;
   }
 }
+
+export {};

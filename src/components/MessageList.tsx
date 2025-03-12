@@ -11,6 +11,12 @@ const MessageList = () => {
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [activeChat?.messages]);
+
+  // Function to check if a message contains only emojis
+  const isEmojiOnly = (text: string) => {
+    const emojiRegex = /^[\p{Emoji}\p{Emoji_Presentation}\p{Extended_Pictographic}\s]+$/u;
+    return emojiRegex.test(text);
+  };
   
   if (!activeChat) {
     return (
@@ -36,12 +42,15 @@ const MessageList = () => {
               opacity: 0,
               animation: 'fade-in 0.3s ease-out forwards',
               transform: message.sender === 'me' ? 'translateX(20px)' : 'translateX(-20px)',
-              animationFillMode: 'forwards'
+              animationFillMode: 'forwards',
+              // Apply special styling for emoji-only messages
+              ...(isEmojiOnly(message.text) && { fontSize: '1.5rem', textAlign: 'center' })
             }}
           >
             <MessageBubble
               message={message}
               isMe={message.sender === 'me'}
+              isEmojiOnly={isEmojiOnly(message.text)}
             />
           </div>
         ))}
