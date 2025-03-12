@@ -7,10 +7,9 @@ import { Check, Globe } from 'lucide-react';
 interface MessageBubbleProps {
   message: Message;
   isMe: boolean;
-  isEmojiOnly?: boolean;
 }
 
-const MessageBubble = ({ message, isMe, isEmojiOnly }: MessageBubbleProps) => {
+const MessageBubble = ({ message, isMe }: MessageBubbleProps) => {
   // Function to enhance emoji display in messages
   const enhanceEmojis = (text: string) => {
     // Regex to detect standalone emojis (not in text)
@@ -46,8 +45,7 @@ const MessageBubble = ({ message, isMe, isEmojiOnly }: MessageBubbleProps) => {
             "chat-bubble",
             isMe
               ? "bg-primary text-primary-foreground rounded-2xl rounded-tr-sm"
-              : "bg-secondary text-secondary-foreground rounded-2xl rounded-tl-sm",
-            isEmojiOnly && "emoji-only-message"
+              : "bg-secondary text-secondary-foreground rounded-2xl rounded-tl-sm"
           )}
         >
           <div className="flex flex-col">
