@@ -5,8 +5,7 @@ import { useChat } from '@/contexts/ChatContext';
 import ConversationHeader from '@/components/ConversationHeader';
 import MessageList from '@/components/MessageList';
 import MessageInput from '@/components/MessageInput';
-import { Loader2, WifiOff } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import { Loader2 } from 'lucide-react';
 
 const ChatView = () => {
   const { chatId } = useParams<{ chatId: string }>();
@@ -50,20 +49,6 @@ const ChatView = () => {
           <div className="flex flex-col items-center gap-2 text-muted-foreground">
             <Loader2 className="h-8 w-8 animate-spin" />
             <span>Connecting to chat server...</span>
-          </div>
-        </div>
-      ) : connectionStatus === 'disconnected' ? (
-        <div className="flex-1 flex items-center justify-center">
-          <div className="flex flex-col items-center gap-3 text-muted-foreground">
-            <WifiOff className="h-8 w-8" />
-            <span>Disconnected from server</span>
-            <Button 
-              variant="secondary" 
-              onClick={() => window.location.reload()}
-              className="mt-2"
-            >
-              Reconnect
-            </Button>
           </div>
         </div>
       ) : (

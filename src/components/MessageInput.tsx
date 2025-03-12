@@ -1,10 +1,9 @@
-
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef } from 'react';
 import { useChat } from '@/contexts/ChatContext';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { 
-  Smile, Send, Paperclip, Mic, MicOff, Image, Camera, File, Loader2, Globe,
+  Smile, Send, Paperclip, Mic, Image, Camera, File, Loader2, Globe,
   Heart, Star, ThumbsUp, Zap, Laugh, Frown, Coffee, Music, Sun
 } from 'lucide-react';
 import { 
@@ -13,96 +12,16 @@ import {
   PopoverTrigger 
 } from '@/components/ui/popover';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { useToast } from '@/hooks/use-toast';
 
 const MessageInput = () => {
   const [message, setMessage] = useState('');
   const [isTranslating, setIsTranslating] = useState(false);
-  const [isRecording, setIsRecording] = useState(false);
   const { sendMessage, activeChat, connectionStatus } = useChat();
   const inputRef = useRef<HTMLInputElement>(null);
-  const recognitionRef = useRef<SpeechRecognition | null>(null);
-  const { toast } = useToast();
-  
-  // Initialize speech recognition
-  useEffect(() => {
-    if ('SpeechRecognition' in window || 'webkitSpeechRecognition' in window) {
-      const SpeechRecognitionAPI = window.SpeechRecognition || window.webkitSpeechRecognition;
-      recognitionRef.current = new SpeechRecognitionAPI();
-      recognitionRef.current.continuous = true;
-      recognitionRef.current.interimResults = true;
-      
-      recognitionRef.current.onresult = (event) => {
-        const transcript = Array.from(event.results)
-          .map(result => result[0])
-          .map(result => result.transcript)
-          .join('');
-          
-        setMessage(transcript);
-      };
-      
-      recognitionRef.current.onerror = (event) => {
-        console.error('Speech recognition error', event.error);
-        setIsRecording(false);
-        toast({
-          title: "Microphone Error",
-          description: `Could not access microphone: ${event.error}`,
-          variant: "destructive",
-        });
-      };
-    }
-    
-    return () => {
-      if (recognitionRef.current) {
-        recognitionRef.current.abort();
-      }
-    };
-  }, [toast]);
-  
-  const toggleRecording = async () => {
-    if (!recognitionRef.current) {
-      toast({
-        title: "Not Supported",
-        description: "Speech recognition is not supported in your browser",
-        variant: "destructive",
-      });
-      return;
-    }
-    
-    if (isRecording) {
-      recognitionRef.current.stop();
-      setIsRecording(false);
-    } else {
-      try {
-        // Request microphone permission first
-        await navigator.mediaDevices.getUserMedia({ audio: true });
-        
-        recognitionRef.current.start();
-        setIsRecording(true);
-        toast({
-          title: "Recording Started",
-          description: "Speak now...",
-        });
-      } catch (error) {
-        console.error('Microphone permission denied:', error);
-        toast({
-          title: "Permission Denied",
-          description: "Microphone access is required for voice input",
-          variant: "destructive",
-        });
-      }
-    }
-  };
   
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!message.trim()) return;
-    
-    // Stop recording if active
-    if (isRecording && recognitionRef.current) {
-      recognitionRef.current.stop();
-      setIsRecording(false);
-    }
     
     // In a real implementation, this is where we would show that the message is being translated
     setIsTranslating(true);
@@ -237,11 +156,10 @@ const MessageInput = () => {
           type="button" 
           variant="ghost" 
           size="icon" 
-          className={`flex-shrink-0 rounded-full transition-colors ${isRecording ? 'bg-red-500 text-white hover:bg-red-600' : 'text-muted-foreground hover:text-foreground'}`}
+          className="flex-shrink-0 text-muted-foreground hover:text-foreground rounded-full transition-colors"
           disabled={connectionStatus !== 'connected'}
-          onClick={toggleRecording}
         >
-          {isRecording ? <MicOff className="h-5 w-5" /> : <Mic className="h-5 w-5" />}
+          <Mic className="h-5 w-5" />
         </Button>
         
         <Button 
@@ -263,7 +181,6 @@ const MessageInput = () => {
         <div className="max-w-3xl mx-auto mt-1 text-xs text-muted-foreground flex items-center gap-1 pl-2">
           <Globe className="h-3 w-3" />
           <span>Translating to {activeChat.language} using NLP</span>
-          {isRecording && <span className="text-red-500 ml-2 animate-pulse">• Recording</span>}
         </div>
       )}
     </form>
