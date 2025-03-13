@@ -1,18 +1,35 @@
 
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 import { Separator } from "@/components/ui/separator";
-import { Bell, Lock, Moon, Sun, Languages, User, Shield, Volume2 } from "lucide-react";
+import { Bell, Lock, Moon, Sun, Languages, User, Shield, Volume2, LogOut } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
 
 const Settings = () => {
   const [darkMode, setDarkMode] = useState(true);
   const [notifications, setNotifications] = useState(true);
   const [sounds, setSounds] = useState(true);
   const [twoFactor, setTwoFactor] = useState(false);
+  const navigate = useNavigate();
+  const { toast } = useToast();
+  
+  const handleLogout = () => {
+    toast({
+      title: "Logging out",
+      description: "You are being logged out of the system...",
+    });
+    
+    setTimeout(() => {
+      localStorage.removeItem('isLoggedIn');
+      localStorage.removeItem('authToken');
+      navigate('/login');
+    }, 1000);
+  };
   
   return (
     <div className="max-w-4xl mx-auto p-4 space-y-6 animate-fade-in">
@@ -165,6 +182,35 @@ const Settings = () => {
               <option value="pt">Portuguese</option>
               <option value="hi">Hindi</option>
             </select>
+          </div>
+        </CardContent>
+      </Card>
+      
+      {/* New Logout Card */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2 text-destructive">
+            <LogOut className="h-5 w-5" />
+            <span>Account</span>
+          </CardTitle>
+          <CardDescription>Session and account management</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-4">
+            <div className="flex items-center justify-between">
+              <div className="space-y-0.5">
+                <Label>Current Session</Label>
+                <p className="text-sm text-muted-foreground">You are currently logged in</p>
+              </div>
+              <Button 
+                variant="destructive"
+                className="gap-2"
+                onClick={handleLogout}
+              >
+                <LogOut className="h-4 w-4" />
+                Logout
+              </Button>
+            </div>
           </div>
         </CardContent>
       </Card>

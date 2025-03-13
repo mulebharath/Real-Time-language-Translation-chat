@@ -56,6 +56,14 @@ const App = () => {
         <BrowserRouter>
           <Routes>
             <Route path="/login" element={<Login />} />
+            <Route path="/" element={
+              <RequireAuth>
+                <Index />
+              </RequireAuth>
+            }>
+              <Route index element={<Home />} />
+              <Route path="chat/:chatId" element={<ChatView />} />
+            </Route>
             <Route path="/dashboard" element={
               <RequireAuth>
                 <Dashboard />
@@ -76,14 +84,6 @@ const App = () => {
                 <Settings />
               </RequireAuth>
             } />
-            <Route path="/" element={
-              <RequireAuth>
-                <Index />
-              </RequireAuth>
-            }>
-              <Route index element={<Home />} />
-              <Route path="chat/:chatId" element={<ChatView />} />
-            </Route>
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>
