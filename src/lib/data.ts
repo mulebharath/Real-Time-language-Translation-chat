@@ -1,3 +1,4 @@
+
 import { nanoid } from 'nanoid';
 
 export type Language = 'English' | 'Spanish' | 'French' | 'German' | 'Japanese' | 'Chinese' | 'Russian' | 'Arabic' | 'Portuguese' | 'Hindi';
@@ -10,6 +11,7 @@ export interface Message {
   translatedText: string;
   delivered?: boolean;
   read?: boolean;
+  senderName?: string;
 }
 
 export interface Chat {
@@ -45,129 +47,6 @@ const generateAvatar = (name: string) => {
   return `https://source.boringavatars.com/beam/120/${encodeURIComponent(name)}?colors=${colors[colorIndex]}`;
 };
 
-// Simulated translation function
-export const translateText = (text: string, fromLang: Language, toLang: Language): string => {
-  if (fromLang === toLang) return text;
-  
-  // Simple demo translations
-  const translations: Record<string, Record<string, string>> = {
-    'Hello!': {
-      'Spanish': '¡Hola!',
-      'French': 'Salut!',
-      'German': 'Hallo!',
-      'Japanese': 'こんにちは!',
-      'Chinese': '你好!',
-      'Russian': 'Привет!',
-      'Arabic': 'مرحبا!',
-      'Portuguese': 'Olá!',
-      'Hindi': 'नमस्ते!'
-    },
-    '¡Hola!': {
-      'English': 'Hello!',
-      'French': 'Salut!',
-      'German': 'Hallo!',
-      'Japanese': 'こんにちは!',
-      'Chinese': '你好!',
-      'Russian': 'Привет!',
-      'Arabic': 'مرحبا!',
-      'Portuguese': 'Olá!',
-      'Hindi': 'नमस्ते!'
-    },
-    'How are you?': {
-      'Spanish': '¿Cómo estás?',
-      'French': 'Comment ça va?',
-      'German': 'Wie geht es dir?',
-      'Japanese': 'お元気ですか?',
-      'Chinese': '你怎么样?',
-      'Russian': 'Как дела?',
-      'Arabic': 'كيف حالك؟',
-      'Portuguese': 'Como vai?',
-      'Hindi': 'आप कैसे हैं?'
-    },
-    '¿Cómo estás?': {
-      'English': 'How are you?',
-      'French': 'Comment ça va?',
-      'German': 'Wie geht es dir?',
-      'Japanese': 'お元気ですか?',
-      'Chinese': '你怎么样?',
-      'Russian': 'Как дела?',
-      'Arabic': 'كيف حالك?',
-      'Portuguese': 'Como vai?',
-      'Hindi': 'आप कैसे हैं?'
-    },
-    'I\'m good, thanks!': {
-      'Spanish': '¡Estoy bien, gracias!',
-      'French': 'Je vais bien, merci!',
-      'German': 'Mir geht es gut, danke!',
-      'Japanese': '元気です、ありがとう!',
-      'Chinese': '我很好，谢谢!',
-      'Russian': 'Я хорошо, спасибо!',
-      'Arabic': 'أنا جيد، شكرا!',
-      'Portuguese': 'Estou bem, obrigado!',
-      'Hindi': 'मैं बेहद आसान हूं, धन्यवाद!'
-    },
-    '¡Estoy bien, gracias!': {
-      'English': 'I\'m good, thanks!',
-      'French': 'Je vais bien, merci!',
-      'German': 'Mir geht es gut, danke!',
-      'Japanese': '元気です、ありがとう!',
-      'Chinese': '我很好，谢谢!',
-      'Russian': 'Я хорошо, спасибо!',
-      'Arabic': 'أنا جيد، شكرا!',
-      'Portuguese': 'Estou bem, obrigado!',
-      'Hindi': 'मैं बेहद आसान हूं, धन्यवाद!'
-    },
-    'What are you doing?': {
-      'Spanish': '¿Qué estás haciendo?',
-      'French': 'Que fais-tu?',
-      'German': 'Was machst du?',
-      'Japanese': '何してるの?',
-      'Chinese': '你在做什么?',
-      'Russian': 'Что ты делаешь?',
-      'Arabic': 'ماذا تفعل؟',
-      'Portuguese': 'O que você está fazendo?',
-      'Hindi': 'आप क्या कर रहे हैं?'
-    },
-    'Nice to meet you!': {
-      'Spanish': '¡Encantado de conocerte!',
-      'French': 'Ravi de vous rencontrer!',
-      'German': 'Schön dich kennenzulernen!',
-      'Japanese': 'はじめまして!',
-      'Chinese': '很高兴见到你!',
-      'Russian': 'Приятно познакомиться!',
-      'Arabic': 'أنا سعيد بانضمك!',
-      'Portuguese': 'Fico feliz em conhecê-lo(a)!',
-      'Hindi': 'मैं आपको जाना चाहता हूं!'
-    },
-    'See you later!': {
-      'Spanish': '¡Hasta luego!',
-      'French': 'À plus tard!',
-      'German': 'Bis später!',
-      'Japanese': 'またね!',
-      'Chinese': '再见!',
-      'Russian': 'До свидания!',
-      'Arabic': 'مع السلامة!',
-      'Portuguese': 'Até logo!',
-      'Hindi': 'लंबे दिन देखें!'
-    }
-  };
-  
-  // Find translation if available
-  if (fromLang === 'English' && translations[text] && translations[text][toLang]) {
-    return translations[text][toLang];
-  }
-  
-  // Try to find reverse translation
-  for (const [srcText, targets] of Object.entries(translations)) {
-    if (text === targets[fromLang as keyof typeof targets] && targets[toLang as keyof typeof targets]) {
-      return targets[toLang as keyof typeof targets];
-    }
-  }
-  
-  // No translation found, return original with indicator
-  return `[${text}]`;
-};
-
 // Generate timestamp for messages
 const getRandomTime = () => {
   const hours = Math.floor(Math.random() * 12) + 1;
@@ -176,82 +55,80 @@ const getRandomTime = () => {
   return `${hours}:${minutes < 10 ? '0' + minutes : minutes} ${ampm}`;
 };
 
-// Create sample messages
-const createMessages = (contactName: string, contactLang: Language): Message[] => {
+// Create sample messages for chat history
+const createMessages = (contactName: string): Message[] => {
   const messages: Message[] = [];
-  const greetings = [
-    { sender: contactName, text: translateText('Hello!', 'English', contactLang) },
-    { sender: 'me', text: 'Hello!' },
-    { sender: contactName, text: translateText('How are you?', 'English', contactLang) },
-    { sender: 'me', text: 'I\'m good, thanks!' },
+  const sampleConversation = [
+    { sender: contactName, text: 'Hey there!' },
+    { sender: 'me', text: 'Hi! How are you doing?' },
+    { sender: contactName, text: 'I\'m good, thanks for asking.' },
+    { sender: 'me', text: 'Did you see the latest updates?' },
   ];
   
-  greetings.forEach((greeting, index) => {
-    const fromLang = greeting.sender === 'me' ? 'English' : contactLang;
-    const toLang = greeting.sender === 'me' ? contactLang : 'English';
-    
+  sampleConversation.forEach((msg) => {
     messages.push({
       id: nanoid(),
-      sender: greeting.sender,
-      text: greeting.text,
+      sender: msg.sender,
+      text: msg.text,
       timestamp: getRandomTime(),
-      translatedText: translateText(greeting.text, fromLang, toLang),
+      translatedText: msg.text, // No translation in this implementation
       delivered: true,
-      read: greeting.sender !== 'me' || index < greetings.length - 2,
+      read: msg.sender !== 'me',
+      senderName: msg.sender !== 'me' ? contactName : undefined
     });
   });
   
   return messages;
 };
 
-// Sample conversations
+// Sample chats for the initial state
 export const initialChats: Chat[] = [
   {
     id: nanoid(),
     name: 'Alice',
     avatar: generateAvatar('Alice'),
-    language: 'Spanish',
+    language: 'English',
     status: 'online',
-    messages: createMessages('Alice', 'Spanish'),
+    messages: createMessages('Alice'),
   },
   {
     id: nanoid(),
     name: 'Bob',
     avatar: generateAvatar('Bob'),
-    language: 'French',
+    language: 'English',
     status: 'online',
     lastSeen: '5m ago',
-    messages: createMessages('Bob', 'French'),
+    messages: createMessages('Bob'),
   },
   {
     id: nanoid(),
     name: 'Carlos',
     avatar: generateAvatar('Carlos'),
-    language: 'Spanish',
+    language: 'English',
     status: 'offline',
     lastSeen: '2h ago',
-    messages: createMessages('Carlos', 'Spanish'),
+    messages: createMessages('Carlos'),
   },
   {
     id: nanoid(),
     name: 'Dieter',
     avatar: generateAvatar('Dieter'),
-    language: 'German',
+    language: 'English',
     status: 'away',
-    messages: createMessages('Dieter', 'German'),
+    messages: createMessages('Dieter'),
   },
   {
     id: nanoid(),
     name: 'Yuki',
     avatar: generateAvatar('Yuki'),
-    language: 'Japanese',
+    language: 'English',
     status: 'offline',
     lastSeen: '1d ago',
-    messages: createMessages('Yuki', 'Japanese'),
+    messages: createMessages('Yuki'),
   },
 ];
 
-// Sample responses for the simulation
+// Sample responses for testing (no longer used for AI responses)
 export const sampleResponses = [
   'Hello there!',
   'How are you today?',

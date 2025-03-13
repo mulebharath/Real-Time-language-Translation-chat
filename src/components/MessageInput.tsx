@@ -12,7 +12,7 @@ import {
 
 const MessageInput = () => {
   const [message, setMessage] = useState('');
-  const [isTranslating, setIsTranslating] = useState(false);
+  const [isSending, setIsSending] = useState(false);
   const { sendMessage, activeChat, connectionStatus } = useChat();
   const inputRef = useRef<HTMLInputElement>(null);
   
@@ -20,19 +20,17 @@ const MessageInput = () => {
     e.preventDefault();
     if (!message.trim()) return;
     
-    // In a real implementation, this is where we would show that the message is being translated
-    setIsTranslating(true);
+    setIsSending(true);
     
     try {
-      // Simulate NLP translation processing delay
-      // In the real implementation, this would be handled by the Spring Boot backend
-      await new Promise(resolve => setTimeout(resolve, 500));
+      // Simulate network delay
+      await new Promise(resolve => setTimeout(resolve, 200));
       
       // Send the message
       sendMessage(message);
       setMessage('');
     } finally {
-      setIsTranslating(false);
+      setIsSending(false);
     }
   };
 
@@ -143,24 +141,16 @@ const MessageInput = () => {
         <Button 
           type="submit" 
           size="icon" 
-          disabled={!message.trim() || connectionStatus !== 'connected' || isTranslating}
+          disabled={!message.trim() || connectionStatus !== 'connected' || isSending}
           className="flex-shrink-0 rounded-full transition-all hover:shadow-lg hover:scale-105 active:scale-95"
         >
-          {isTranslating ? (
+          {isSending ? (
             <Loader2 className="h-5 w-5 animate-spin" />
           ) : (
             <Send className="h-5 w-5" />
           )}
         </Button>
       </div>
-      
-      {/* This section would show the current translation service status */}
-      {activeChat && connectionStatus === 'connected' && (
-        <div className="max-w-3xl mx-auto mt-1 text-xs text-muted-foreground flex items-center gap-1 pl-2">
-          <Globe className="h-3 w-3" />
-          <span>Translating to {activeChat.language} using NLP</span>
-        </div>
-      )}
     </form>
   );
 };
