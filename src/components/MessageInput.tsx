@@ -3,7 +3,7 @@ import React, { useState, useRef } from 'react';
 import { useChat } from '@/contexts/ChatContext';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { Smile, Send, Paperclip, Mic, Image, Camera, File, Loader2 } from 'lucide-react';
+import { Smile, Send, Paperclip, Mic, Image, Camera, File, Loader2, Globe } from 'lucide-react';
 import { 
   Popover, 
   PopoverContent, 
