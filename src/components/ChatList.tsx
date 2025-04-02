@@ -16,7 +16,7 @@ const ChatList = () => {
   
   const handleChatClick = (chatId: string) => {
     setActiveChatId(chatId);
-    navigate(`/chat/${chatId}`);
+    navigate(`/home/chat/${chatId}`);
   };
 
   const handleNavigation = (path: string, tab: string) => {
@@ -49,13 +49,13 @@ const ChatList = () => {
             <span>Dashboard</span>
           </Button>
           <Button
-            variant={activeTab === 'chats' && location.pathname.includes('/chat') ? 'secondary' : 'ghost'}
+            variant={activeTab === 'chats' && location.pathname.includes('/home') ? 'secondary' : 'ghost'}
             size="sm"
             className={cn(
               "flex items-center gap-2 text-sm rounded-md w-full justify-start",
-              activeTab === 'chats' && location.pathname.includes('/chat') ? "bg-secondary/50" : ""
+              activeTab === 'chats' && location.pathname.includes('/home') ? "bg-secondary/50" : ""
             )}
-            onClick={() => handleNavigation('/', 'chats')}
+            onClick={() => handleNavigation('/home', 'chats')}
           >
             <MessageCircle className="h-4 w-4" />
             <span>Chats</span>
