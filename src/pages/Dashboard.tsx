@@ -17,8 +17,8 @@ const Dashboard = () => {
     chat => chat.status === 'online'
   ).length;
   
-  // Set languages count to 1 as shown in the image
-  const languages = 1;
+  // Set languages count to 10 to match all available languages
+  const languages = 10;
   
   return (
     <div className="min-h-screen bg-background">
@@ -41,7 +41,7 @@ const Dashboard = () => {
           <Button 
             variant="ghost" 
             className="w-full justify-start" 
-            onClick={() => navigate('/chat/' + initialChats[0].id)}
+            onClick={() => navigate('/home')}
           >
             <MessageCircle className="h-4 w-4 mr-2" />
             Chats
@@ -49,6 +49,7 @@ const Dashboard = () => {
           <Button 
             variant="ghost" 
             className="w-full justify-start"
+            onClick={() => navigate('/contacts')}
           >
             <Users className="h-4 w-4 mr-2" />
             Contacts
@@ -56,6 +57,7 @@ const Dashboard = () => {
           <Button 
             variant="ghost" 
             className="w-full justify-start"
+            onClick={() => navigate('/notifications')}
           >
             <Bell className="h-4 w-4 mr-2" />
             Notifications
@@ -63,6 +65,7 @@ const Dashboard = () => {
           <Button 
             variant="ghost" 
             className="w-full justify-start"
+            onClick={() => navigate('/settings')}
           >
             <Settings className="h-4 w-4 mr-2" />
             Settings
@@ -123,7 +126,11 @@ const Dashboard = () => {
         <h2 className="text-xl font-bold mb-4">Recent Conversations</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {initialChats.map(chat => (
-            <Card key={chat.id} className="cursor-pointer hover:bg-secondary/10" onClick={() => navigate(`/chat/${chat.id}`)}>
+            <Card 
+              key={chat.id} 
+              className="cursor-pointer hover:bg-secondary/10" 
+              onClick={() => navigate(`/home/chat/${chat.id}`)}
+            >
               <CardHeader className="pb-2">
                 <div className="flex items-center">
                   <div className="relative mr-3">
