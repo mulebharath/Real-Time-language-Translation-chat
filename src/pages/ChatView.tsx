@@ -5,6 +5,7 @@ import { useChat } from '@/contexts/ChatContext';
 import ConversationHeader from '@/components/ConversationHeader';
 import MessageList from '@/components/MessageList';
 import MessageInput from '@/components/MessageInput';
+import UserSearch from '@/components/UserSearch';
 
 const ChatView = () => {
   const { chatId } = useParams<{ chatId: string }>();
@@ -29,6 +30,9 @@ const ChatView = () => {
   return (
     <div className="flex flex-col h-full">
       <ConversationHeader />
+      <div className="px-4 py-2 border-b border-border/10">
+        <UserSearch />
+      </div>
       <MessageList />
       <MessageInput />
     </div>

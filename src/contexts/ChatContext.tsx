@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext, useState, useEffect, ReactNode, useRef } from 'react';
 import { nanoid } from 'nanoid';
 import { useToast } from '@/hooks/use-toast';
@@ -17,6 +16,7 @@ interface ChatContextProps {
   toggleChatList: () => void;
   isChatListOpen: boolean;
   connectionStatus: 'connected' | 'connecting' | 'disconnected';
+  startNewChat: (userName: string, userAvatar: string) => string;
 }
 
 const ChatContext = createContext<ChatContextProps | undefined>(undefined);
@@ -34,6 +34,25 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
   const activeChat = activeChatId 
     ? chats.find(chat => chat.id === activeChatId) || null 
     : null;
+
+  // Start a new chat with a user
+  const startNewChat = (userName: string, userAvatar: string) => {
+    const newChatId = nanoid();
+    
+    const newChat: Chat = {
+      id: newChatId,
+      name: userName,
+      avatar: userAvatar,
+      language: userLanguage,
+      status: 'online',
+      messages: [],
+    };
+    
+    setChats(prev => [...prev, newChat]);
+    setActiveChatId(newChatId);
+    
+    return newChatId;
+  };
 
   // Simulating connection status
   useEffect(() => {
@@ -88,9 +107,6 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
         ? { ...chat, messages: [...chat.messages, newMessage] } 
         : chat
     ));
-    
-    // In a real implementation, this would send the message to other users
-    // For now, we'll just update the UI
   };
   
   // Request notification permission when the app loads
@@ -111,7 +127,8 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
       sendMessage,
       toggleChatList,
       isChatListOpen,
-      connectionStatus
+      connectionStatus,
+      startNewChat
     }}>
       {children}
     </ChatContext.Provider>

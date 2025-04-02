@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -18,7 +17,14 @@ const Dashboard = () => {
     chat => chat.status === 'online'
   ).length;
   
-  const languages = new Set(initialChats.map(chat => chat.language)).size;
+  // Count actual unique languages instead of just using Set size
+  const languagesMap = {};
+  initialChats.forEach(chat => {
+    if (chat.language) {
+      languagesMap[chat.language] = true;
+    }
+  });
+  const languages = Object.keys(languagesMap).length;
   
   return (
     <div className="min-h-screen bg-background">
