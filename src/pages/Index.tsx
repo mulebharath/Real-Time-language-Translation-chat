@@ -11,7 +11,7 @@ const Index = () => {
   const [theme, setTheme] = useState<'dark' | 'light'>('dark');
   const isMobile = useIsMobile();
   const location = useLocation();
-  const isHomePage = location.pathname === '/';
+  const isHomePage = location.pathname === '/home';
   
   // Set up theme class on document
   useEffect(() => {

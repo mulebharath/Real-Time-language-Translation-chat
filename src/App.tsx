@@ -55,8 +55,10 @@ const App = () => {
         <Sonner />
         <BrowserRouter>
           <Routes>
+            {/* Redirect root to login page */}
+            <Route path="/" element={<Navigate to="/login" replace />} />
             <Route path="/login" element={<Login />} />
-            <Route path="/" element={
+            <Route path="/home" element={
               <RequireAuth>
                 <Index />
               </RequireAuth>

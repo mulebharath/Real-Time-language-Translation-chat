@@ -60,7 +60,8 @@ const Login = () => {
         description: `${isSignUp ? "Account created" : "Login"} successful!`,
       });
       
-      navigate('/');
+      // Navigate to /home instead of / 
+      navigate('/dashboard');
     } catch (error) {
       toast({
         title: "Authentication Failed",

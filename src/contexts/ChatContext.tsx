@@ -35,7 +35,6 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
     ? chats.find(chat => chat.id === activeChatId) || null 
     : null;
 
-  // Start a new chat with a user
   const startNewChat = (userName: string, userAvatar: string) => {
     const newChatId = nanoid();
     
@@ -54,14 +53,12 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
     return newChatId;
   };
 
-  // Simulating connection status
   useEffect(() => {
     const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
     
     if (isLoggedIn) {
       setConnectionStatus('connecting');
       
-      // Simulate connection
       const connectionTimeout = setTimeout(() => {
         setConnectionStatus('connected');
         toast({
@@ -109,7 +106,6 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
     ));
   };
   
-  // Request notification permission when the app loads
   useEffect(() => {
     if ('Notification' in window && Notification.permission === 'default') {
       Notification.requestPermission();

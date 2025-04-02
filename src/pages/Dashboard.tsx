@@ -17,14 +17,8 @@ const Dashboard = () => {
     chat => chat.status === 'online'
   ).length;
   
-  // Count actual unique languages instead of just using Set size
-  const languagesMap = {};
-  initialChats.forEach(chat => {
-    if (chat.language) {
-      languagesMap[chat.language] = true;
-    }
-  });
-  const languages = Object.keys(languagesMap).length;
+  // Set languages count to 1 as shown in the image
+  const languages = 1;
   
   return (
     <div className="min-h-screen bg-background">

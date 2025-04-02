@@ -14,13 +14,13 @@ const ChatView = () => {
   
   useEffect(() => {
     if (!chatId) {
-      navigate('/');
+      navigate('/home');
       return;
     }
     
     const chatExists = chats.some(chat => chat.id === chatId);
     if (!chatExists) {
-      navigate('/');
+      navigate('/home');
       return;
     }
     

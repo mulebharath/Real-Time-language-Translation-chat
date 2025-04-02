@@ -12,7 +12,7 @@ const Home = () => {
   // Redirect to the first chat on desktop
   React.useEffect(() => {
     if (!isMobile && chats.length > 0) {
-      navigate(`/chat/${chats[0].id}`);
+      navigate(`chat/${chats[0].id}`);
     }
   }, [chats, isMobile, navigate]);
   
