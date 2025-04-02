@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
-import { Lock, Mail, User } from 'lucide-react';
+import { Lock, Mail, User, Phone } from 'lucide-react';
 import { Separator } from '@/components/ui/separator';
 
 const Login = () => {
@@ -13,6 +13,7 @@ const Login = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [isSignUp, setIsSignUp] = useState(false);
   const [name, setName] = useState('');
+  const [phone, setPhone] = useState('');
   const { toast } = useToast();
   const navigate = useNavigate();
 
@@ -54,13 +55,16 @@ const Login = () => {
       localStorage.setItem('authToken', 'demo-jwt-token');
       localStorage.setItem('userEmail', email);
       localStorage.setItem('userName', isSignUp ? name : email.split('@')[0]);
+      if (phone) {
+        localStorage.setItem('userPhone', phone);
+      }
       
       toast({
         title: "Success",
         description: `${isSignUp ? "Account created" : "Login"} successful!`,
       });
       
-      // Navigate to /home instead of / 
+      // Navigate to dashboard
       navigate('/dashboard');
     } catch (error) {
       toast({
@@ -82,6 +86,7 @@ const Login = () => {
     setPassword('password');
     if (isSignUp) {
       setName('Demo User');
+      setPhone('+1 (555) 123-4567');
     }
   };
 
@@ -105,18 +110,33 @@ const Login = () => {
           
           <form onSubmit={handleAuth} className="space-y-4">
             {isSignUp && (
-              <div className="space-y-2">
-                <div className="relative">
-                  <User className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                  <Input
-                    type="text"
-                    placeholder="Name"
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
-                    className="pl-10"
-                  />
+              <>
+                <div className="space-y-2">
+                  <div className="relative">
+                    <User className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                    <Input
+                      type="text"
+                      placeholder="Name"
+                      value={name}
+                      onChange={(e) => setName(e.target.value)}
+                      className="pl-10"
+                    />
+                  </div>
                 </div>
-              </div>
+                
+                <div className="space-y-2">
+                  <div className="relative">
+                    <Phone className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                    <Input
+                      type="tel"
+                      placeholder="Phone Number"
+                      value={phone}
+                      onChange={(e) => setPhone(e.target.value)}
+                      className="pl-10"
+                    />
+                  </div>
+                </div>
+              </>
             )}
             
             <div className="space-y-2">
